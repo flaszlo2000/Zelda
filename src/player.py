@@ -3,10 +3,15 @@ from settings import *
 from support import import_folder
 from entity import Entity
 
+from pathlib import Path
+
+from scripts.image_provider import image_provider
+
+
 class Player(Entity):
 	def __init__(self,pos,groups,obstacle_sprites,create_attack,destroy_attack,create_magic):
 		super().__init__(groups)
-		self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
+		self.image = image_provider.provideWithAlphaConvert(Path("./graphics/test/player.png"))
 		self.rect = self.image.get_rect(topleft = pos)
 		self.hitbox = self.rect.inflate(-6,HITBOX_OFFSET['player'])
 
@@ -51,7 +56,7 @@ class Player(Entity):
 		self.invulnerability_duration = 500
 
 		# import a sound
-		self.weapon_attack_sound = pygame.mixer.Sound('../audio/sword.wav')
+		self.weapon_attack_sound = pygame.mixer.Sound('./audio/sword.wav')
 		self.weapon_attack_sound.set_volume(0.4)
 
 	def import_player_assets(self):
@@ -173,6 +178,7 @@ class Player(Entity):
 			self.frame_index = 0
 
 		# set the image
+		return # FIXME
 		self.image = animation[int(self.frame_index)]
 		self.rect = self.image.get_rect(center = self.hitbox.center)
 

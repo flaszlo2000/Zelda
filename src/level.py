@@ -13,16 +13,38 @@ from magic import MagicPlayer
 from upgrade import Upgrade
 
 from pathlib import Path
+from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 
-from .scripts.image_provider import image_provider
+from scripts.image_provider import image_provider
 
+#region future baseclasses
+@dataclass
+class GameState:
+	game_paused: bool = field(default = False)
+
+class BaseLevel:
+	def __init__(self, game_state: GameState):
+		self._game_state = game_state
+
+		self._layouts = BaseLevel._fetchLayouts()
+		self._graphics = BaseLevel._fetchGraphics()
+
+	@staticmethod
+	@abstractmethod
+	def _fetchLayouts() -> dict:...
+
+	@staticmethod
+	@abstractmethod
+	def _fetchGraphics() -> dict:...
+#endregion
 
 class Level:
 	def __init__(self):
 
 		# get the display surface 
 		self.display_surface = pygame.display.get_surface()
-		self.game_paused = False
+		self.game_paused = False # FIXME: use GameState instead of this
 
 		# sprite group setup
 		self.visible_sprites = YSortCameraGroup()
@@ -44,17 +66,30 @@ class Level:
 		self.animation_player = AnimationPlayer()
 		self.magic_player = MagicPlayer(self.animation_player)
 
-	def create_map(self):
+	@staticmethod
+	def _fetchLayouts() -> dict:
 		layouts = {
-			'boundary': import_csv_layout('../map/map_FloorBlocks.csv'),
-			'grass': import_csv_layout('../map/map_Grass.csv'),
-			'object': import_csv_layout('../map/map_Objects.csv'),
-			'entities': import_csv_layout('../map/map_Entities.csv')
+			'boundary': import_csv_layout('./map/map_FloorBlocks.csv'),
+			'grass': import_csv_layout('./map/map_Grass.csv'),
+			'object': import_csv_layout('./map/map_Objects.csv'),
+			'entities': import_csv_layout('./map/map_Entities.csv')
 		}
+
+		return layouts
+
+	@staticmethod
+	def _fetchGraphics() -> dict:
+		# FIXME: use ImageProvider
 		graphics = {
-			'grass': import_folder('../graphics/Grass'),
-			'objects': import_folder('../graphics/objects')
+			'grass': import_folder('./graphics/grass'),
+			'objects': import_folder('./graphics/objects')
 		}
+
+		return graphics
+
+	def create_map(self):
+		layouts = Level._fetchLayouts()
+		graphics = Level._fetchGraphics()
 
 		for style,layout in layouts.items():
 			for row_index,row in enumerate(layout):
@@ -86,6 +121,7 @@ class Level:
 									self.destroy_attack,
 									self.create_magic)
 							else:
+								continue # FIXME
 								if col == '390': monster_name = 'bamboo'
 								elif col == '391': monster_name = 'spirit'
 								elif col == '392': monster_name ='raccoon'
@@ -172,7 +208,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.offset = pygame.math.Vector2()
 
 		# creating the floor
-		self.floor_surf = image_provider.provide(Path("./graphics/tilemap/ground.png"))
+		self.floor_surf = image_provider.provideWithConvert(Path("./graphics/tilemap/ground.png"))
 		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
 	def custom_draw(self,player):

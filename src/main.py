@@ -7,6 +7,8 @@ from level import Level
 
 class Game:
 	def __init__(self):
+		self.alive = False
+
 		pygame.init()
 		self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGTH))
 		pygame.display.set_caption('Zelda')
@@ -15,12 +17,14 @@ class Game:
 		self.level = Level() # TODO: make this dynamic
 
 		# sound 
-		main_sound = pygame.mixer.Sound('../audio/main.ogg')
+		main_sound = pygame.mixer.Sound('./audio/main.ogg')
 		main_sound.set_volume(0.5)
 		main_sound.play(loops = -1)
 	
 	def run(self):
-		while True:
+		self.alive = True
+
+		while self.alive:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()
