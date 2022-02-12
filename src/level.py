@@ -3,7 +3,7 @@ from settings import *
 from tile import Tile
 from player import Player
 from debug import debug
-from support import *
+from data_loader import *
 from random import choice, randint
 from weapon import Weapon
 from ui import UI
@@ -91,8 +91,8 @@ class Level:
 		layouts = Level._fetchLayouts()
 		graphics = Level._fetchGraphics()
 
-		for style,layout in layouts.items():
-			for row_index,row in enumerate(layout):
+		for style, layout in layouts.items():
+			for row_index, row in enumerate(layout):
 				for col_index, col in enumerate(row):
 					if col != '-1':
 						x = col_index * TILESIZE
