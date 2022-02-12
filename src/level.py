@@ -12,6 +12,11 @@ from particles import AnimationPlayer
 from magic import MagicPlayer
 from upgrade import Upgrade
 
+from pathlib import Path
+
+from .scripts.image_provider import image_provider
+
+
 class Level:
 	def __init__(self):
 
@@ -167,8 +172,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.offset = pygame.math.Vector2()
 
 		# creating the floor
-
-		self.floor_surf = pygame.image.load('../graphics/tilemap/ground.png').convert()
+		self.floor_surf = image_provider.provide(Path("./graphics/tilemap/ground.png"))
 		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
 	def custom_draw(self,player):
