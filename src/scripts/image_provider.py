@@ -6,7 +6,7 @@ from pygame.image import load as pygame_image_load
 
 class ImageProvider:
     def __init__(self, initial_images: Dict[Path, Surface] = dict()):
-        self.__images = initial_images # NOTE: these images are not conerted
+        self.__images = initial_images # NOTE: these images are not converted
 
     @staticmethod
     def _checkPathType(image_path: Union[str, Path]) -> Path:

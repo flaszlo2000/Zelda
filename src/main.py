@@ -16,22 +16,44 @@ class Game:
 
 		self.level = Level() # TODO: make this dynamic
 
+		self._fetchBindings()
+
 		# sound 
 		main_sound = pygame.mixer.Sound('./audio/main.ogg')
 		main_sound.set_volume(0.5)
 		main_sound.play(loops = -1)
-	
+
+	def _fetchBindings(self) -> None:
+		# TODO: read this from file
+		self.event_dict = {
+			pygame.QUIT: self._quit
+		}
+
+		self.key_binding_dict = {
+			pygame.K_m: self.level.toggle_menu,
+			pygame.K_ESCAPE: self.showMenu
+		}
+
+	def _quit(self) -> None:
+		pygame.quit()
+		sys.exit()
+
+	def showMenu(self) -> None:
+		print("show menu")
+
 	def run(self):
 		self.alive = True
 
+		handled_events = self.event_dict.keys()
+		key_bindings = self.key_binding_dict.keys()
+
 		while self.alive:
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_m:
-						self.level.toggle_menu()
+				if event.type in handled_events:
+					self.event_dict[event.type]()
+				
+				if event.type == pygame.KEYDOWN and event.key in key_bindings:
+					self.key_binding_dict[event.key]()
 
 			self.screen.fill(settings.WATER_COLOR)
 			self.level.run()
