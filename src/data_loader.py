@@ -1,6 +1,5 @@
 from csv import reader
 from os import walk
-
 from pathlib import Path
 
 from scripts.image_provider import image_provider

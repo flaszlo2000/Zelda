@@ -1,6 +1,9 @@
 Extended Python Zelda clone
 
 Features:  
+[] save system  
+[] multiple levels  
+[] procedural generation  
 [] multiplayer  
 [] map editor  
 [] clean code

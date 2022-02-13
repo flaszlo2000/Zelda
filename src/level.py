@@ -1,4 +1,5 @@
 import pygame 
+from pygame.sprite import Group
 from settings import *
 from tile import Tile
 from player import Player
@@ -15,13 +16,17 @@ from upgrade import Upgrade
 from pathlib import Path
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
+from typing import Dict, List
 
 from scripts.image_provider import image_provider
+from game_essentails.cameras import Renderer, YSortCameraRenderer
+
 
 #region future baseclasses
 @dataclass
 class GameState:
     game_paused: bool = field(default = False)
+    ui: UI = field(default_factory = UI)
 
 class BaseLevel:
     def __init__(self, game_state: GameState):
@@ -37,29 +42,56 @@ class BaseLevel:
     @staticmethod
     @abstractmethod
     def _fetchGraphics() -> dict:...
-#endregion
 
-class Level:
-    def __init__(self):
+class SpriteGroups:
+    "Collect levels sprite groups with the camera as well"
+    def __init__(self, visible_sprites: Renderer = None):
+        if visible_sprites is None:
+            self._visible_sprites_by_camera = YSortCameraRenderer()
+        else:
+            self._visible_sprites_by_camera = visible_sprites
 
-        # get the display surface 
-        self.display_surface = pygame.display.get_surface()
-        self.game_paused = False # FIXME: use GameState instead of this
-
-        # sprite group setup
-        self.visible_sprites = YSortCameraGroup()
-        self.obstacle_sprites = pygame.sprite.Group()
+        self._obstacle_sprites = Group()
 
         # attack sprites
         self.current_attack = None
-        self.attack_sprites = pygame.sprite.Group()
-        self.attackable_sprites = pygame.sprite.Group()
+        self.attack_sprites = Group()
+        self._attackable_sprites = Group()
 
+    @property
+    def visible_sprites(self) -> Renderer:
+        return self._visible_sprites_by_camera
+
+    @property
+    def obstacle_sprites(self) -> Group:
+        return self._obstacle_sprites
+
+    @property
+    def attackable_sprites(self) -> Group:
+        return self._attackable_sprites
+
+    def renderWithPlayer(self, player: Player) -> None:
+        self._visible_sprites_by_camera.renderScreenWithPlayer(player)
+#endregion
+
+
+class Level:
+    def __init__(self, sprite_groups: SpriteGroups = None):
+        self.display_surface = pygame.display.get_surface()
+
+        if sprite_groups is None:
+            self.sprite_groups = SpriteGroups()
+        else:
+            self.sprite_groups = sprite_groups
+
+        # FIXME: use GameState instead of this
+        self.game_paused = False 
+        #self.ui = UI() # TODO: move this to level handler level
+        
         # sprite setup
         self.create_map()
 
         # user interface 
-        self.ui = UI()
         self.upgrade = Upgrade(self.player)
 
         # particles
@@ -69,9 +101,9 @@ class Level:
     @staticmethod
     def _fetchLayouts() -> dict:
         layouts = {
-            'boundary': import_csv_layout('./map/map_FloorBlocks.csv'),
+            # 'boundary': import_csv_layout('./map/map_FloorBlocks.csv'),
             'grass': import_csv_layout('./map/map_Grass.csv'),
-            'object': import_csv_layout('./map/map_Objects.csv'),
+            # 'object': import_csv_layout('./map/map_Objects.csv'),
             'entities': import_csv_layout('./map/map_Entities.csv')
         }
 
@@ -91,32 +123,36 @@ class Level:
         layouts = Level._fetchLayouts()
         graphics = Level._fetchGraphics()
 
-        for style, layout in layouts.items():
-            for row_index, row in enumerate(layout):
+        # return
+        for layout_name, grid in layouts.items():
+            for row_index, row in enumerate(grid):
                 for col_index, col in enumerate(row):
                     if col != '-1':
                         x = col_index * TILESIZE
                         y = row_index * TILESIZE
-                        if style == 'boundary':
+                        if layout_name == 'boundary':
+                            # continue
                             Tile((x,y),[self.obstacle_sprites],'invisible')
-                        if style == 'grass':
+                        if layout_name == 'grass':
+                            # continue
                             random_grass_image = choice(graphics['grass'])
                             Tile(
                                 (x,y),
-                                [self.visible_sprites,self.obstacle_sprites,self.attackable_sprites],
+                                [self.sprite_groups.visible_sprites, self.sprite_groups.obstacle_sprites, self.sprite_groups.attackable_sprites],
                                 'grass',
                                 random_grass_image)
 
-                        if style == 'object':
+                        if layout_name == 'object':
+                            # continue
                             surf = graphics['objects'][int(col)]
-                            Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',surf)
+                            Tile((x, y),[self.visible_sprites,self.obstacle_sprites],'object',surf)
 
-                        if style == 'entities':
+                        if layout_name == 'entities':
                             if col == '394':
                                 self.player = Player(
                                     (x,y),
-                                    [self.visible_sprites],
-                                    self.obstacle_sprites,
+                                    [self.sprite_groups.visible_sprites],
+                                    self.sprite_groups.obstacle_sprites,
                                     self.create_attack,
                                     self.destroy_attack,
                                     self.create_magic)
@@ -152,6 +188,7 @@ class Level:
         self.current_attack = None
 
     def player_attack_logic(self):
+        return
         if self.attack_sprites:
             for attack_sprite in self.attack_sprites:
                 collision_sprites = pygame.sprite.spritecollide(attack_sprite,self.attackable_sprites,False)
@@ -186,47 +223,14 @@ class Level:
         self.game_paused = not self.game_paused 
 
     def run(self):
-        self.visible_sprites.custom_draw(self.player)
-        self.ui.display(self.player)
+        self.sprite_groups.renderWithPlayer(self.player)
+        #self.ui.display(self.player)
         
         if self.game_paused:
             self.upgrade.display()
         else:
-            self.visible_sprites.update()
-            self.visible_sprites.enemy_update(self.player)
+            # FIXME: LOD
+            self.sprite_groups.visible_sprites.update()
+            self.sprite_groups.visible_sprites.enemy_update(self.player)
             self.player_attack_logic()
         
-
-class YSortCameraGroup(pygame.sprite.Group):
-    def __init__(self):
-
-        # general setup 
-        super().__init__()
-        self.display_surface = pygame.display.get_surface()
-        self.half_width = self.display_surface.get_size()[0] // 2
-        self.half_height = self.display_surface.get_size()[1] // 2
-        self.offset = pygame.math.Vector2()
-
-        # creating the floor
-        self.floor_surf = image_provider.provideWithConvert(Path("./graphics/tilemap/ground.png"))
-        self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
-
-    def custom_draw(self,player):
-
-        # getting the offset 
-        self.offset.x = player.rect.centerx - self.half_width
-        self.offset.y = player.rect.centery - self.half_height
-
-        # drawing the floor
-        floor_offset_pos = self.floor_rect.topleft - self.offset
-        self.display_surface.blit(self.floor_surf,floor_offset_pos)
-
-        # for sprite in self.sprites():
-        for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
-            offset_pos = sprite.rect.topleft - self.offset
-            self.display_surface.blit(sprite.image,offset_pos)
-
-    def enemy_update(self,player):
-        enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite,'sprite_type') and sprite.sprite_type == 'enemy']
-        for enemy in enemy_sprites:
-            enemy.enemy_update(player)

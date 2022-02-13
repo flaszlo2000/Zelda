@@ -1,5 +1,5 @@
 import pygame
-from src.data_loader import import_folder
+from data_loader import import_folder
 from random import choice
 
 class AnimationPlayer:
