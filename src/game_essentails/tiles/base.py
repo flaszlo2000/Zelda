@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from .. sprite_groups import SpriteGroups
-from src.settings import HITBOX_OFFSET
+from src.settings import HITBOX_OFFSET, TILESIZE
 
 class AbstractBaseTile(Sprite, ABC):
-    def __init__(self, sprite_groups: SpriteGroups, position: List[int], image_surface: Surface):
+    def __init__(self, sprite_groups: SpriteGroups, _position: List[int], image_surface: Surface):
         super().__init__(self.getRelatedGroups(sprite_groups))
 
-        self.position = position
+        self.position = [position * TILESIZE for position in _position]
         self.image = image_surface
 
     @abstractmethod
@@ -25,10 +25,10 @@ class AbstractBaseTile(Sprite, ABC):
 
 # NOTE: int list from the csvs
 
-from enum import IntEnum
+from enum import Enum
 
-class TileIdEnum(IntEnum):
-    EMPTY = -1
+class TileIdEnum(Enum):
+    EMPTY = "-1"
 
 
     GRASS1 = 8

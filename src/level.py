@@ -1,6 +1,5 @@
 import pygame 
-from pygame.sprite import Group
-from settings import *
+from pygame.surface import Surface
 from tile import Tile
 from player import Player
 from debug import debug
@@ -13,13 +12,14 @@ from particles import AnimationPlayer
 from magic import MagicPlayer
 from upgrade import Upgrade
 
-from pathlib import Path
 from abc import ABC, abstractmethod
 
-from scripts.image_provider import image_provider
-from game_essentails.cameras import Renderer, YSortCameraRenderer
+from settings import TILESIZE
+
 from game_essentails.game_state import GamePauser
 from game_essentails.tiles.grass import GrassTile
+from game_essentails.tiles.real_object_tile import RealObjectTile
+from game_essentails.tiles.boundary import BoundaryTile
 from game_essentails.sprite_groups import SpriteGroups
 
 #region future baseclasses
@@ -76,9 +76,9 @@ class Level:
     @staticmethod
     def _fetchLayouts() -> dict:
         layouts = {
-            # 'boundary': import_csv_layout('./map/map_FloorBlocks.csv'),
+            'boundary': import_csv_layout('./map/map_FloorBlocks.csv'),
             'grass': import_csv_layout('./map/map_Grass.csv'),
-            # 'object': import_csv_layout('./map/map_Objects.csv'),
+            'object': import_csv_layout('./map/map_Objects.csv'),
             'entities': import_csv_layout('./map/map_Entities.csv')
         }
 
@@ -100,28 +100,26 @@ class Level:
 
         # return
         for layout_name, grid in layouts.items():
-            for row_index, row in enumerate(grid):
-                for col_index, col in enumerate(row):
-                    if col == '-1': continue
+            for y, row in enumerate(grid):
+                for x, col in enumerate(row):
+                    if col == "-1": continue
 
-                    x = col_index * TILESIZE
-                    y = row_index * TILESIZE
+                    # NOTE: is it ok to not store anywhere these objects?
                     if layout_name == 'boundary':
-                        # continue
-                        Tile((x,y),[self.sprite_groups.obstacle_sprites],'invisible')
+                        BoundaryTile(self.sprite_groups, [x, y], Surface((TILESIZE,TILESIZE)))
+
                     if layout_name == 'grass':
                         random_grass_image = choice(graphics['grass'])
-                        GrassTile(self.sprite_groups, [x, y], random_grass_image) # NOTE: is it ok to not store anywhere?
+                        GrassTile(self.sprite_groups, [x, y], random_grass_image) 
 
                     if layout_name == 'object':
-                        # continue
-                        surf = graphics['objects'][int(col)]
-                        Tile((x, y),[self.sprite_groups.visible_sprites,self.sprite_groups.obstacle_sprites],'object',surf)
+                        surface_image = graphics['objects'][int(col)]
+                        RealObjectTile(self.sprite_groups, [x, y], surface_image)
 
                     if layout_name == 'entities':
                         if col == '394':
                             self.player = Player(
-                                (x,y),
+                                (x * TILESIZE, y * TILESIZE),
                                 [self.sprite_groups.visible_sprites],
                                 self.sprite_groups.obstacle_sprites,
                                 self.create_attack,

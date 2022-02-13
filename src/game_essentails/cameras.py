@@ -2,8 +2,11 @@ from pygame.sprite import Group
 from pygame.display import get_surface
 from pygame.math import Vector2
 from abc import ABC, abstractmethod
+from pathlib import Path
 
-from player import Player
+from src.player import Player
+from scripts.image_provider import image_provider
+
 
 
 class Renderer(ABC, Group):
@@ -20,8 +23,8 @@ class YSortCameraRenderer(Renderer):
 
         # creating the floor
         # TODO: draw background
-        # self.floor_surf = image_provider.provideWithConvert(Path("./graphics/tilemap/ground.png"))
-        # self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
+        self.floor_surf = image_provider.provideWithConvert(Path("./graphics/tilemap/ground.png"))
+        self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
     def renderScreenWithPlayer(self, player: Player) -> None:
         # getting the offset of the player
@@ -30,8 +33,8 @@ class YSortCameraRenderer(Renderer):
 
         # drawing the floor
         # TODO: draw background
-        # floor_offset_pos = self.floor_rect.topleft - self.offset
-        # self.display_surface.blit(self.floor_surf,floor_offset_pos)
+        floor_offset_pos = self.floor_rect.topleft - self.offset
+        self.display_surface.blit(self.floor_surf,floor_offset_pos)
 
         # get ALL sprites in the parent Group and then sort them by centery
         for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):

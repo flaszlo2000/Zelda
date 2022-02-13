@@ -1,12 +1,14 @@
-from .base import AbstractBaseTile
-from src.settings import TILESIZE, HITBOX_OFFSET
+from . base import AbstractBaseTile
+from src.settings import TILESIZE
 
 
 class ObjectTile(AbstractBaseTile):
+    __sprite_name__ = "object"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.rect = self.image.get_rect(topleft = (self.positionos[0], self.positionpos[1] - TILESIZE))
+        self.rect = self.image.get_rect(topleft = (self.position[0], self.position[1] - TILESIZE))
         super().setHitbox()
 
 class NormalTile(AbstractBaseTile):
