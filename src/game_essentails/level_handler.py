@@ -10,6 +10,8 @@ class LevelHandler:
         self._game_state = game_state
 
     def updateLevel(self) -> None:
+        # NOTE: this is called from the main loop so if you want to add input or something like that
+        # you can do that from here or the subupdate functions
         self._level.run()
         self._game_state.updateUi(self._level.getPlayer())
 

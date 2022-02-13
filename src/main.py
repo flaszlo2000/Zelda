@@ -6,6 +6,8 @@ from game_essentails.level_handler import LevelHandler
 from game_essentails.game_state import GameState
 from ui.ui import UI
 from level import Level
+from game_essentails.events import key_broadcast_subject
+from scripts.observer import EventObserverMsg
 
 
 class Game:
@@ -13,7 +15,7 @@ class Game:
         self.__pygameInit()
 
         self.ui = UI()
-        self.game_state = GameState(self.ui)
+        self.game_state = GameState(_ui = self.ui)
         
         initial_level = Level(self.game_state.getGamePauser()) # TODO: make this dynamic
         if level_handler is None:
@@ -23,16 +25,16 @@ class Game:
 
         self._fetchBindings()
 
-        # sound 
-        main_sound = pygame.mixer.Sound('./audio/main.ogg')
-        main_sound.set_volume(0.5)
-        main_sound.play(loops = -1)
-
     def __pygameInit(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGTH))
         pygame.display.set_caption('Zelda')
         self.clock = pygame.time.Clock()
+
+        # sound 
+        main_sound = pygame.mixer.Sound('./audio/main.ogg')
+        main_sound.set_volume(0.5)
+        main_sound.play(loops = -1)
 
     def _fetchBindings(self) -> None:
         # TODO: read this from file
@@ -58,6 +60,7 @@ class Game:
 
         handled_events = self.event_dict.keys()
         key_bindings = self.key_binding_dict.keys()
+        needed_mouse_event = [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP] # for observer (menu)
 
         while self.game_state.isAlive():
             for event in pygame.event.get():
@@ -66,6 +69,18 @@ class Game:
                 
                 if event.type == pygame.KEYDOWN and event.key in key_bindings:
                     self.key_binding_dict[event.key]()
+
+                # observer notification
+                if event.type == pygame.KEYDOWN or event.type in needed_mouse_event:
+                    event_id: int = None
+                    
+                    if event.type == pygame.KEYDOWN:
+                        event_id = event.key
+                    else:
+                        event_id = event.type
+
+                    if event_id in key_broadcast_subject.getEventList():
+                        key_broadcast_subject.notify(event_id, EventObserverMsg(event))
 
             self.screen.fill(settings.WATER_COLOR)
             self.level_handler.updateLevel()

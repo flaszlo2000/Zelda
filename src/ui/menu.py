@@ -1,30 +1,41 @@
 import settings
 from pygame import Rect
-from pygame import event, MOUSEBUTTONDOWN, MOUSEBUTTONUP
+from pygame import MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
 
+from scripts.observer import KeyObserver, EventObserverMsg
+from game_essentails.events import key_broadcast_subject
 
-class Menu:
+
+class Menu(KeyObserver):
     def __init__(self, _visible: bool = False):
         self.visible = _visible
 
         self.colors = ["#ff0000", "#00ff00"]
         self.clicked = False
 
+        self._registerForKeys()
+
+    def updateByNotification(self, msg: EventObserverMsg) -> None:
+        if self.visible:
+            if msg.value.type == MOUSEBUTTONDOWN:
+                if self.button.collidepoint(msg.value.pos):
+                    self.clicked = True
+            else:
+                if self.clicked:
+                    if self.button.collidepoint(msg.value.pos):
+                        print("exit")
+
+                    self.clicked = False
+
+    def _registerForKeys(self) -> None:
+        key_broadcast_subject.attach(self, MOUSEBUTTONDOWN)
+        key_broadcast_subject.attach(self, MOUSEBUTTONUP)
+
     def toggle(self) -> None:
         self.visible = not self.visible
-
-    def check_for_click(self):
-        # TODO: move this to the global key checking
-        for _event in event.get():
-            if _event.type == MOUSEBUTTONDOWN:
-                if self.button.collidepoint(_event.pos):
-                    self.clicked = True
-            
-            if _event.type == MOUSEBUTTONUP and self.clicked:
-                self.clicked = False
 
     def draw(self) -> None:
         if not self.visible: return
@@ -40,4 +51,6 @@ class Menu:
         self.button = Rect(150, 100, 50, 50)
         draw_rect(surface, self.colors[self.clicked], self.button)
 
-        self.check_for_click()
+if __name__ == "__main__":
+    test_menu = Menu()
+    print(test_menu)

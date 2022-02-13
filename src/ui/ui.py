@@ -6,7 +6,6 @@ from . menu import Menu
 
 class UI:
     def __init__(self):
-        
         # general 
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(settings.UI_FONT, settings.UI_FONT_SIZE)
