@@ -10,7 +10,6 @@ class Renderer(ABC, Group):
     @abstractmethod
     def renderScreenWithPlayer(self, player: Player) -> None:...
 
-
 class YSortCameraRenderer(Renderer):
     def __init__(self):
         super().__init__()
@@ -23,8 +22,6 @@ class YSortCameraRenderer(Renderer):
         # TODO: draw background
         # self.floor_surf = image_provider.provideWithConvert(Path("./graphics/tilemap/ground.png"))
         # self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
-
-    def custom_renderer(self, player) -> None:...
 
     def renderScreenWithPlayer(self, player: Player) -> None:
         # getting the offset of the player
@@ -45,8 +42,3 @@ class YSortCameraRenderer(Renderer):
         enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite,'sprite_type') and sprite.sprite_type == 'enemy']
         for enemy in enemy_sprites:
             enemy.enemy_update(player)
-
-
-if __name__ == "__main__":
-    ysort_renderer = YSortCameraRenderer()
-    print(ysort_renderer)

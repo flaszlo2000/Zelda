@@ -23,26 +23,6 @@ from game_essentails.cameras import Renderer, YSortCameraRenderer
 
 
 #region future baseclasses
-@dataclass
-class GameState:
-    game_paused: bool = field(default = False)
-    ui: UI = field(default_factory = UI)
-
-class BaseLevel:
-    def __init__(self, game_state: GameState):
-        self._game_state = game_state
-
-        self._layouts = BaseLevel._fetchLayouts()
-        self._graphics = BaseLevel._fetchGraphics()
-
-    @staticmethod
-    @abstractmethod
-    def _fetchLayouts() -> dict:...
-
-    @staticmethod
-    @abstractmethod
-    def _fetchGraphics() -> dict:...
-
 class SpriteGroups:
     "Collect levels sprite groups with the camera as well"
     def __init__(self, visible_sprites: Renderer = None):
@@ -72,6 +52,22 @@ class SpriteGroups:
 
     def renderWithPlayer(self, player: Player) -> None:
         self._visible_sprites_by_camera.renderScreenWithPlayer(player)
+
+class BaseLevel:
+    def __init__(self, sprite_groups: SpriteGroups = None):
+        self._layouts = BaseLevel._fetchLayouts()
+        self._graphics = BaseLevel._fetchGraphics()
+
+    @staticmethod
+    @abstractmethod
+    def _fetchLayouts() -> dict:...
+
+    @staticmethod
+    @abstractmethod
+    def _fetchGraphics() -> dict:...
+
+    def getPlayer(self) -> Player:
+        return self.player # NOTE: atm this has been created in create_map
 #endregion
 
 
@@ -233,4 +229,6 @@ class Level:
             self.sprite_groups.visible_sprites.update()
             self.sprite_groups.visible_sprites.enemy_update(self.player)
             self.player_attack_logic()
-        
+    
+    def getPlayer(self) -> Player:
+        return self.player
