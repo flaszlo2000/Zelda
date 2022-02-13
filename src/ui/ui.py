@@ -1,6 +1,9 @@
 import pygame
 import settings
 
+from . menu import Menu
+
+
 class UI:
     def __init__(self):
         
@@ -25,6 +28,8 @@ class UI:
             magic = pygame.image.load(magic['graphic']).convert_alpha()
             self.magic_graphics.append(magic)
 
+        # menu
+        self.menu = Menu()
 
     def show_bar(self,current,max_amount,bg_rect,color):
         # draw bg 
@@ -81,3 +86,8 @@ class UI:
 
         self.weapon_overlay(player.weapon_index,not player.can_switch_weapon)
         self.magic_overlay(player.magic_index,not player.can_switch_magic)
+
+        self.menu.draw()
+
+    def toggleMenu(self) -> None:
+        self.menu.toggle()

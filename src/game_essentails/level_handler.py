@@ -18,4 +18,4 @@ class LevelHandler:
         self._level.getPlayer().testOuter()
     
     def toggleMenu(self) -> None:
-        self._level.toggle_menu()
+        self._game_state.toggleGameState()

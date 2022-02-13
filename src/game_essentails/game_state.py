@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from player import Player
 
-from ui import UI
+from ui.ui import UI
 
 
 @dataclass
@@ -34,3 +34,10 @@ class GameState:
 
     def getGamePauser(self) -> GamePauser:
         return self.__game_pauser
+
+    def toggleGameState(self) -> None:
+        self.__game_pauser.toggle()        
+
+    def showMenu(self) -> None:
+        self.__ui.toggleMenu()
+        self.toggleGameState()

@@ -4,7 +4,7 @@ import sys, signal
 import settings
 from game_essentails.level_handler import LevelHandler
 from game_essentails.game_state import GameState
-from ui import UI
+from ui.ui import UI
 from level import Level
 
 
@@ -51,7 +51,7 @@ class Game:
         sys.exit()
 
     def showMenu(self) -> None:
-        print("show menu")
+        self.game_state.showMenu()
 
     def run(self):
         self.game_state.makeGameAlive()

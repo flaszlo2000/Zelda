@@ -4,7 +4,7 @@ from pygame.math import Vector2
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from src.player import Player
+from player import Player
 from scripts.image_provider import image_provider
 
 

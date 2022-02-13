@@ -1,12 +1,11 @@
 import pygame 
 from pygame.surface import Surface
-from tile import Tile
 from player import Player
 from debug import debug
 from data_loader import *
 from random import choice, randint
 from weapon import Weapon
-from ui import UI
+from ui.ui import UI
 from enemy import Enemy
 from particles import AnimationPlayer
 from magic import MagicPlayer
@@ -140,6 +139,7 @@ class Level:
                                 self.trigger_death_particles,
                                 self.add_exp)
 
+    #region TODO: move this to player level
     def create_attack(self):
         
         self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
@@ -155,6 +155,7 @@ class Level:
         if self.current_attack:
             self.current_attack.kill()
         self.current_attack = None
+    #endregion
 
     def player_attack_logic(self):
         return
@@ -187,14 +188,12 @@ class Level:
 
         self.player.exp += amount
 
-    def toggle_menu(self):
-        self.game_pauser.toggle()
-
     def run(self):
         self.sprite_groups.renderWithPlayer(self.player)
         
         if self.game_pauser.isPaused():
-            self.upgrade.displayUpgradeMenu()
+            #self.upgrade.displayUpgradeMenu() # FIXME: do not depend on the game state, use visible attribut instead
+            pass
         else:
             # FIXME: LOD
             self.sprite_groups.visible_sprites.update()

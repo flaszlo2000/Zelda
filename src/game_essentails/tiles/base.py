@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from .. sprite_groups import SpriteGroups
-from src.settings import HITBOX_OFFSET, TILESIZE
+from settings import HITBOX_OFFSET, TILESIZE
 
 class AbstractBaseTile(Sprite, ABC):
     def __init__(self, sprite_groups: SpriteGroups, _position: List[int], image_surface: Surface):
@@ -34,3 +34,6 @@ class TileIdEnum(Enum):
     GRASS1 = 8
     GRASS2 = 9
     GRASS3 = 10
+
+
+    PLAYER = 394
