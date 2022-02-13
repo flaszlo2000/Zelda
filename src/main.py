@@ -15,7 +15,7 @@ class Game:
         self.ui = UI()
         self.game_state = GameState(self.ui)
         
-        initial_level = Level() # TODO: make this dynamic
+        initial_level = Level(self.game_state.getGamePauser()) # TODO: make this dynamic
         if level_handler is None:
             self.level_handler = LevelHandler(initial_level, self.game_state)
         else:

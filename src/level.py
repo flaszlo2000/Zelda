@@ -14,49 +14,28 @@ from magic import MagicPlayer
 from upgrade import Upgrade
 
 from pathlib import Path
-from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import Dict, List
 
 from scripts.image_provider import image_provider
 from game_essentails.cameras import Renderer, YSortCameraRenderer
-
+from game_essentails.game_state import GamePauser
+from game_essentails.tiles.grass import GrassTile
+from game_essentails.sprite_groups import SpriteGroups
 
 #region future baseclasses
-class SpriteGroups:
-    "Collect levels sprite groups with the camera as well"
-    def __init__(self, visible_sprites: Renderer = None):
-        if visible_sprites is None:
-            self._visible_sprites_by_camera = YSortCameraRenderer()
-        else:
-            self._visible_sprites_by_camera = visible_sprites
 
-        self._obstacle_sprites = Group()
-
-        # attack sprites
-        self.current_attack = None
-        self.attack_sprites = Group()
-        self._attackable_sprites = Group()
-
-    @property
-    def visible_sprites(self) -> Renderer:
-        return self._visible_sprites_by_camera
-
-    @property
-    def obstacle_sprites(self) -> Group:
-        return self._obstacle_sprites
-
-    @property
-    def attackable_sprites(self) -> Group:
-        return self._attackable_sprites
-
-    def renderWithPlayer(self, player: Player) -> None:
-        self._visible_sprites_by_camera.renderScreenWithPlayer(player)
-
-class BaseLevel:
-    def __init__(self, sprite_groups: SpriteGroups = None):
+class BaseLevel(ABC):
+    def __init__(self, game_pauser: GamePauser, sprite_groups: SpriteGroups = None):
+        self.display_surface = pygame.display.get_surface()
         self._layouts = BaseLevel._fetchLayouts()
         self._graphics = BaseLevel._fetchGraphics()
+
+        self.game_pauser = game_pauser
+
+        if sprite_groups is None:
+            self.sprite_groups = SpriteGroups()
+        else:
+            self.sprite_groups = sprite_groups
 
     @staticmethod
     @abstractmethod
@@ -66,13 +45,16 @@ class BaseLevel:
     @abstractmethod
     def _fetchGraphics() -> dict:...
 
+    @abstractmethod
+    def createMap(self) -> None:...
+
     def getPlayer(self) -> Player:
         return self.player # NOTE: atm this has been created in create_map
 #endregion
 
 
 class Level:
-    def __init__(self, sprite_groups: SpriteGroups = None):
+    def __init__(self, game_pauser: GamePauser, sprite_groups: SpriteGroups = None):
         self.display_surface = pygame.display.get_surface()
 
         if sprite_groups is None:
@@ -80,14 +62,11 @@ class Level:
         else:
             self.sprite_groups = sprite_groups
 
-        # FIXME: use GameState instead of this
-        self.game_paused = False 
-        #self.ui = UI() # TODO: move this to level handler level
+        self.game_pauser = game_pauser
         
         # sprite setup
         self.create_map()
 
-        # user interface 
         self.upgrade = Upgrade(self.player)
 
         # particles
@@ -123,49 +102,45 @@ class Level:
         for layout_name, grid in layouts.items():
             for row_index, row in enumerate(grid):
                 for col_index, col in enumerate(row):
-                    if col != '-1':
-                        x = col_index * TILESIZE
-                        y = row_index * TILESIZE
-                        if layout_name == 'boundary':
-                            # continue
-                            Tile((x,y),[self.obstacle_sprites],'invisible')
-                        if layout_name == 'grass':
-                            # continue
-                            random_grass_image = choice(graphics['grass'])
-                            Tile(
+                    if col == '-1': continue
+
+                    x = col_index * TILESIZE
+                    y = row_index * TILESIZE
+                    if layout_name == 'boundary':
+                        # continue
+                        Tile((x,y),[self.sprite_groups.obstacle_sprites],'invisible')
+                    if layout_name == 'grass':
+                        random_grass_image = choice(graphics['grass'])
+                        GrassTile(self.sprite_groups, [x, y], random_grass_image) # NOTE: is it ok to not store anywhere?
+
+                    if layout_name == 'object':
+                        # continue
+                        surf = graphics['objects'][int(col)]
+                        Tile((x, y),[self.sprite_groups.visible_sprites,self.sprite_groups.obstacle_sprites],'object',surf)
+
+                    if layout_name == 'entities':
+                        if col == '394':
+                            self.player = Player(
                                 (x,y),
-                                [self.sprite_groups.visible_sprites, self.sprite_groups.obstacle_sprites, self.sprite_groups.attackable_sprites],
-                                'grass',
-                                random_grass_image)
-
-                        if layout_name == 'object':
-                            # continue
-                            surf = graphics['objects'][int(col)]
-                            Tile((x, y),[self.visible_sprites,self.obstacle_sprites],'object',surf)
-
-                        if layout_name == 'entities':
-                            if col == '394':
-                                self.player = Player(
-                                    (x,y),
-                                    [self.sprite_groups.visible_sprites],
-                                    self.sprite_groups.obstacle_sprites,
-                                    self.create_attack,
-                                    self.destroy_attack,
-                                    self.create_magic)
-                            else:
-                                continue # FIXME
-                                if col == '390': monster_name = 'bamboo'
-                                elif col == '391': monster_name = 'spirit'
-                                elif col == '392': monster_name ='raccoon'
-                                else: monster_name = 'squid'
-                                Enemy(
-                                    monster_name,
-                                    (x,y),
-                                    [self.visible_sprites,self.attackable_sprites],
-                                    self.obstacle_sprites,
-                                    self.damage_player,
-                                    self.trigger_death_particles,
-                                    self.add_exp)
+                                [self.sprite_groups.visible_sprites],
+                                self.sprite_groups.obstacle_sprites,
+                                self.create_attack,
+                                self.destroy_attack,
+                                self.create_magic)
+                        else:
+                            continue # FIXME
+                            if col == '390': monster_name = 'bamboo'
+                            elif col == '391': monster_name = 'spirit'
+                            elif col == '392': monster_name ='raccoon'
+                            else: monster_name = 'squid'
+                            Enemy(
+                                monster_name,
+                                (x,y),
+                                [self.visible_sprites,self.attackable_sprites],
+                                self.obstacle_sprites,
+                                self.damage_player,
+                                self.trigger_death_particles,
+                                self.add_exp)
 
     def create_attack(self):
         
@@ -215,15 +190,13 @@ class Level:
         self.player.exp += amount
 
     def toggle_menu(self):
-
-        self.game_paused = not self.game_paused 
+        self.game_pauser.toggle()
 
     def run(self):
         self.sprite_groups.renderWithPlayer(self.player)
-        #self.ui.display(self.player)
         
-        if self.game_paused:
-            self.upgrade.display()
+        if self.game_pauser.isPaused():
+            self.upgrade.displayUpgradeMenu()
         else:
             # FIXME: LOD
             self.sprite_groups.visible_sprites.update()

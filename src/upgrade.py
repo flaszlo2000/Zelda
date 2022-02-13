@@ -62,7 +62,7 @@ class Upgrade:
             item = Item(left,top,self.width,self.height,index,self.font)
             self.item_list.append(item)
 
-    def display(self):
+    def displayUpgradeMenu(self):
         self.input()
         self.selection_cooldown()
 

@@ -15,6 +15,7 @@ class LevelHandler:
 
     def changeLevel(self, new_level: Level) -> bool:
         print("called")
+        self._level.getPlayer().testOuter()
     
     def toggleMenu(self) -> None:
         self._level.toggle_menu()

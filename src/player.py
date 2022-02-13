@@ -218,3 +218,6 @@ class Player(Entity):
         self.animate()
         self.move(self.stats['speed'])
         self.energy_recovery()
+
+    def testOuter(self):
+        self.exp += 10000

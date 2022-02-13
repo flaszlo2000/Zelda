@@ -1,16 +1,29 @@
-from dataclasses import dataclass, field
+from pygame.sprite import Sprite
+from pygame import Surface
+from abc import ABC, abstractmethod
 from typing import List
 
-@dataclass
-class BaseTile:
-    position: List[int] = field(default_factory=[0, 0])
+from .. sprite_groups import SpriteGroups
+from src.settings import HITBOX_OFFSET
 
-    def getResolutionBySize(self, size: int) -> List[int]:
-        return [elem*size for elem in self.position]
+class AbstractBaseTile(Sprite, ABC):
+    def __init__(self, sprite_groups: SpriteGroups, position: List[int], image_surface: Surface):
+        super().__init__(self.getRelatedGroups(sprite_groups))
 
+        self.position = position
+        self.image = image_surface
 
-# class 
+    @abstractmethod
+    def getRelatedGroups(self, sprite_groups: object) -> list:... # FIXME: type hint
 
+    def setHitbox(self) -> None:
+        if hasattr(self, "rect") and hasattr(self, "__sprite_name__"):
+            y_offset = HITBOX_OFFSET[self.__sprite_name__]
+            self.hitbox = self.rect.inflate(0, y_offset)
+        else:
+            raise ValueError("self.rect or __sprite_name__ is missing!")
+
+# NOTE: int list from the csvs
 
 from enum import IntEnum
 
