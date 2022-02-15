@@ -1,38 +1,31 @@
 import settings
 from pygame import Rect
-from pygame import MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
+from typing import Dict
 
-from scripts.observer import KeyObserver, EventObserverMsg
-from game_essentails.events import key_broadcast_subject
+from ui.button import Button, ButtonFactory
 
 
-class Menu(KeyObserver):
-    def __init__(self, _visible: bool = False):
-        self.visible = _visible
+class BasicUiElement: # TODO: move this to a separate file and use it as parent class everywhere
+    def __init__(self, visibility = False):
+        self.visible = visibility
+    
+    def isVisible(self) -> bool:
+        return self.visible
 
-        self.colors = ["#ff0000", "#00ff00"]
-        self.clicked = False
+class Menu(BasicUiElement):
+    def __init__(self):
+        super().__init__()
 
-        self._registerForKeys()
+        button_factory = ButtonFactory(self.isVisible)
 
-    def updateByNotification(self, msg: EventObserverMsg) -> None:
-        if self.visible:
-            if msg.value.type == MOUSEBUTTONDOWN:
-                if self.button.collidepoint(msg.value.pos):
-                    self.clicked = True
-            else:
-                if self.clicked:
-                    if self.button.collidepoint(msg.value.pos):
-                        print("exit")
-
-                    self.clicked = False
-
-    def _registerForKeys(self) -> None:
-        key_broadcast_subject.attach(self, MOUSEBUTTONDOWN)
-        key_broadcast_subject.attach(self, MOUSEBUTTONUP)
+        self.button_group: Dict[Button] = {
+            "exit": button_factory.create(lambda: print("exit"), [150, 100, 50, 50]),
+            "save": button_factory.create(lambda: print("save"), [250, 100, 50, 50]),
+            "load": button_factory.create(lambda: print("load"), [350, 100, 50, 50]),
+        }
 
     def toggle(self) -> None:
         self.visible = not self.visible
@@ -48,8 +41,8 @@ class Menu(KeyObserver):
         text_surface = self.font.render("Menu", False, settings.TEXT_COLOR)
         surface.blit(text_surface, menu_body)
 
-        self.button = Rect(150, 100, 50, 50)
-        draw_rect(surface, self.colors[self.clicked], self.button)
+        for button in self.button_group.values():
+            draw_rect(surface, button.getStateColor(), button)
 
 if __name__ == "__main__":
     test_menu = Menu()

@@ -33,9 +33,9 @@ class Observer(ABC):
     @abstractmethod
     def updateByNotification(self, msg: ObserverMsg) -> None:...
 
-class KeyObserver(Observer):
-    def updateByNotification(self, msg: ObserverMsg) -> None:
-        print(f"I {self} have been updated with this msg: {msg}")
+class KeyObserver(Observer):...
+    # def updateByNotification(self, msg: ObserverMsg) -> None:
+    #     print(f"I {self} have been updated with this msg: {msg}")
 
 class Subject(ABC):
     def __init__(self, observers: Dict[int, List[Observer]] = dict()):

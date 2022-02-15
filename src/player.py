@@ -70,6 +70,7 @@ class Player(Entity):
             self.animations[animation] = import_folder(full_path)
 
     def input(self):
+        # FIXME: use eventObserver instead of this and remove this from player sprite representation
         if not self.attacking:
             keys = pygame.key.get_pressed()
 
