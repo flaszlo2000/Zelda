@@ -13,7 +13,7 @@ from upgrade import Upgrade
 
 from abc import ABC, abstractmethod
 
-from settings import TILESIZE
+from settings import TILESIZE, ENTITY_DICT
 
 from game_essentails.game_state import GamePauser
 from game_essentails.tiles.grass import GrassTile
@@ -97,7 +97,6 @@ class Level:
         layouts = Level._fetchLayouts()
         graphics = Level._fetchGraphics()
 
-        # return
         for layout_name, grid in layouts.items():
             for y, row in enumerate(grid):
                 for x, col in enumerate(row):
@@ -116,28 +115,31 @@ class Level:
                         RealObjectTile(self.sprite_groups, [x, y], surface_image)
 
                     if layout_name == 'entities':
-                        if col == '394':
-                            self.player = Player(
-                                (x * TILESIZE, y * TILESIZE),
-                                [self.sprite_groups.visible_sprites],
-                                self.sprite_groups.obstacle_sprites,
-                                self.create_attack,
-                                self.destroy_attack,
-                                self.create_magic)
-                        else:
-                            continue # FIXME
-                            if col == '390': monster_name = 'bamboo'
-                            elif col == '391': monster_name = 'spirit'
-                            elif col == '392': monster_name ='raccoon'
-                            else: monster_name = 'squid'
-                            Enemy(
-                                monster_name,
-                                (x,y),
-                                [self.visible_sprites,self.attackable_sprites],
-                                self.obstacle_sprites,
-                                self.damage_player,
-                                self.trigger_death_particles,
-                                self.add_exp)
+                        if col not in ENTITY_DICT.keys():
+                            print(f"{col} id hasn't been found in the ENTITY_DICT!")
+                            continue
+
+                        current_entity = ENTITY_DICT[col](
+                            (x * TILESIZE, y * TILESIZE),
+                            [self.sprite_groups.visible_sprites],
+                            self.sprite_groups.obstacle_sprites
+                        )
+
+                        if current_entity.isPlayer():
+                            self.player = current_entity # FIXME: move this to __init__ level
+
+                        # if col == '390': monster_name = 'bamboo'
+                        # elif col == '391': monster_name = 'spirit'
+                        # elif col == '392': monster_name ='raccoon'
+                        # else: monster_name = 'squid'
+                        # Enemy(
+                        #     monster_name,
+                        #     (x,y),
+                        #     [self.visible_sprites,self.attackable_sprites],
+                        #     self.obstacle_sprites,
+                        #     self.damage_player,
+                        #     self.trigger_death_particles,
+                        #     self.add_exp)
 
     #region TODO: move this to player level
     def create_attack(self):

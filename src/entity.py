@@ -2,8 +2,10 @@ import pygame
 from math import sin
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self,groups):
+    def __init__(self, groups, is_player: bool = False):
         super().__init__(groups)
+        self.is_player = is_player
+        
         self.frame_index = 0
         self.animation_speed = 0.15
         self.direction = pygame.math.Vector2()
@@ -41,3 +43,6 @@ class Entity(pygame.sprite.Sprite):
             return 255
         else: 
             return 0
+
+    def isPlayer(self) -> bool:
+        return self.is_player

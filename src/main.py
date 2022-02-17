@@ -7,7 +7,7 @@ from game_essentails.game_state import GameState
 from ui.ui import UI
 from level import Level
 from game_essentails.events import key_broadcast_subject
-from scripts.observer import EventObserverMsg
+from scripts.observer import EventObserverMsg, CallbackObserver
 
 
 class Game:
@@ -24,6 +24,8 @@ class Game:
             self.level_handler = level_handler
 
         self._fetchBindings()
+        self._event_observer = CallbackObserver(lambda arg: self._quit()) # TODO: make this more flexible
+        key_broadcast_subject.attach(self._event_observer, pygame.QUIT)
 
     def __pygameInit(self) -> None:
         pygame.init()
@@ -49,6 +51,7 @@ class Game:
         }
 
     def _quit(self) -> None:
+        print("Exit by calling quit!")
         pygame.quit()
         sys.exit()
 
@@ -72,12 +75,10 @@ class Game:
 
                 # observer notification
                 if event.type == pygame.KEYDOWN or event.type in needed_mouse_event:
-                    event_id: int = None
+                    event_id: int = event.type
                     
                     if event.type == pygame.KEYDOWN:
                         event_id = event.key
-                    else:
-                        event_id = event.type
 
                     if event_id in key_broadcast_subject.getEventList():
                         key_broadcast_subject.notify(event_id, EventObserverMsg(event))

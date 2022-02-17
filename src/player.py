@@ -9,8 +9,8 @@ from scripts.image_provider import image_provider
 
 
 class Player(Entity):
-    def __init__(self,pos,groups,obstacle_sprites,create_attack,destroy_attack,create_magic):
-        super().__init__(groups)
+    def __init__(self,pos,groups,obstacle_sprites):
+        super().__init__(groups, is_player = True)
         self.image = image_provider.provideWithAlphaConvert(Path("./graphics/test/player.png"))
         self.rect = self.image.get_rect(topleft = pos)
         self.hitbox = self.rect.inflate(-6,HITBOX_OFFSET['player'])
@@ -26,8 +26,8 @@ class Player(Entity):
         self.obstacle_sprites = obstacle_sprites
 
         # weapon
-        self.create_attack = create_attack
-        self.destroy_attack = destroy_attack
+        # self.create_attack = create_attack
+        # self.destroy_attack = destroy_attack
         self.weapon_index = 0
         self.weapon = list(weapon_data.keys())[self.weapon_index]
         self.can_switch_weapon = True
@@ -35,7 +35,7 @@ class Player(Entity):
         self.switch_duration_cooldown = 200
 
         # magic 
-        self.create_magic = create_magic
+        # self.create_magic = create_magic
         self.magic_index = 0
         self.magic = list(magic_data.keys())[self.magic_index]
         self.can_switch_magic = True
@@ -97,7 +97,8 @@ class Player(Entity):
             if keys[pygame.K_SPACE]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
-                self.create_attack()
+                # self.create_attack()
+                print("create attack")
                 self.weapon_attack_sound.play()
 
             # magic input 
@@ -107,7 +108,8 @@ class Player(Entity):
                 style = list(magic_data.keys())[self.magic_index]
                 strength = list(magic_data.values())[self.magic_index]['strength'] + self.stats['magic']
                 cost = list(magic_data.values())[self.magic_index]['cost']
-                self.create_magic(style,strength,cost)
+                # self.create_magic(style,strength,cost)
+                print("create magic")
 
             if keys[pygame.K_q] and self.can_switch_weapon:
                 self.can_switch_weapon = False
@@ -156,7 +158,8 @@ class Player(Entity):
         if self.attacking:
             if current_time - self.attack_time >= self.attack_cooldown + weapon_data[self.weapon]['cooldown']:
                 self.attacking = False
-                self.destroy_attack()
+                #self.destroy_attack()
+                print("destroy attack")
 
         if not self.can_switch_weapon:
             if current_time - self.weapon_switch_time >= self.switch_duration_cooldown:

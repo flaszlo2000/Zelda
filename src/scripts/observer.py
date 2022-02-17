@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Callable, Any
 from pygame.event import Event
 
 #region ObserverMsg
@@ -32,6 +32,13 @@ class EventObserverMsg(ObserverMsg):
 class Observer(ABC):
     @abstractmethod
     def updateByNotification(self, msg: ObserverMsg) -> None:...
+
+class CallbackObserver(Observer):
+    def __init__(self, callback: Callable[[ObserverMsg], Any]):
+        self.__callback = callback
+
+    def updateByNotification(self, msg: ObserverMsg) -> None:
+        self.__callback(msg)
 
 class KeyObserver(Observer):...
     # def updateByNotification(self, msg: ObserverMsg) -> None:

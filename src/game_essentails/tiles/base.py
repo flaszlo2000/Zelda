@@ -3,7 +3,7 @@ from pygame import Surface
 from abc import ABC, abstractmethod
 from typing import List
 
-from .. sprite_groups import SpriteGroups
+from game_essentails.sprite_groups import SpriteGroups
 from settings import HITBOX_OFFSET, TILESIZE
 
 class AbstractBaseTile(Sprite, ABC):
@@ -22,18 +22,3 @@ class AbstractBaseTile(Sprite, ABC):
             self.hitbox = self.rect.inflate(0, y_offset)
         else:
             raise ValueError("self.rect or __sprite_name__ is missing!")
-
-# NOTE: int list from the csvs
-
-from enum import Enum
-
-class TileIdEnum(Enum):
-    EMPTY = "-1"
-
-
-    GRASS1 = 8
-    GRASS2 = 9
-    GRASS3 = 10
-
-
-    PLAYER = 394

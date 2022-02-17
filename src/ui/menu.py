@@ -3,9 +3,11 @@ from pygame import Rect
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
+from pygame.constants import QUIT
 from typing import Dict
 
 from ui.button import Button, ButtonFactory
+from game_essentails.events import key_broadcast_subject
 
 
 class BasicUiElement: # TODO: move this to a separate file and use it as parent class everywhere
@@ -21,8 +23,8 @@ class Menu(BasicUiElement):
 
         button_factory = ButtonFactory(self.isVisible)
 
-        self.button_group: Dict[Button] = {
-            "exit": button_factory.create(lambda: print("exit"), [150, 100, 50, 50]),
+        self.button_group: Dict[str, Button] = {
+            "exit": button_factory.create(lambda: key_broadcast_subject.notify(QUIT), [150, 100, 50, 50]),
             "save": button_factory.create(lambda: print("save"), [250, 100, 50, 50]),
             "load": button_factory.create(lambda: print("load"), [350, 100, 50, 50]),
         }
