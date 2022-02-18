@@ -4,9 +4,9 @@ from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
 from pygame.constants import QUIT
-from typing import Dict
+from typing import List
 
-from ui.button import Button, ButtonFactory
+from ui.button import ButtonText, ButtonFactory, ButtonGroup, ButtonData
 from game_essentails.events import key_broadcast_subject
 
 
@@ -22,12 +22,13 @@ class Menu(BasicUiElement):
         super().__init__()
 
         button_factory = ButtonFactory(self.isVisible)
+        button_data: List[ButtonData] = [
+            ButtonData(ButtonText("exit"), lambda: key_broadcast_subject.notify(QUIT), [150, 100, 50, 50]),
+            ButtonData(ButtonText("save"), lambda: print("save"), [250, 100, 50, 50]),
+            ButtonData(ButtonText("load"), lambda: print("load"), [350, 100, 50, 50]),
+        ]
 
-        self.button_group: Dict[str, Button] = {
-            "exit": button_factory.create(lambda: key_broadcast_subject.notify(QUIT), [150, 100, 50, 50]),
-            "save": button_factory.create(lambda: print("save"), [250, 100, 50, 50]),
-            "load": button_factory.create(lambda: print("load"), [350, 100, 50, 50]),
-        }
+        self._button_group = ButtonGroup(button_data, button_factory)
 
     def toggle(self) -> None:
         self.visible = not self.visible
@@ -43,8 +44,7 @@ class Menu(BasicUiElement):
         text_surface = self.font.render("Menu", False, settings.TEXT_COLOR)
         surface.blit(text_surface, menu_body)
 
-        for button in self.button_group.values():
-            draw_rect(surface, button.getStateColor(), button)
+        self._button_group.draw()
 
 if __name__ == "__main__":
     test_menu = Menu()

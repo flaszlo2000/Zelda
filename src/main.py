@@ -88,6 +88,8 @@ class Game:
             pygame.display.update()
             self.clock.tick(settings.FPS)
 
+        self._quit()
+
     def sigint(self, signum, frame) -> None:
         self.game_state.kill()
     
