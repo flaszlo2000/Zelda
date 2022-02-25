@@ -3,7 +3,7 @@ from pygame import Rect
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
-from pygame.constants import QUIT
+from pygame.constants import QUIT, K_e
 from typing import List
 
 from ui.button import ButtonText, ButtonFactory, ButtonGroup, ButtonData
@@ -29,6 +29,11 @@ class Menu(BasicUiElement):
         ]
 
         self._button_group = ButtonGroup(button_data, button_factory)
+        self.__setKeyBindings()
+
+    def __setKeyBindings(self) -> None:
+        exit_button = self._button_group.getButton("exit")
+        exit_button.setKeybinding(K_e)
 
     def toggle(self) -> None:
         self.visible = not self.visible

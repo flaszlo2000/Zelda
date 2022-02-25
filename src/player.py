@@ -4,12 +4,14 @@ from data_loader import import_folder
 from entity import Entity
 
 from pathlib import Path
+from typing import Tuple, List, Any
+from pygame.sprite import Group
 
 from scripts.image_provider import image_provider
 
 
 class Player(Entity):
-    def __init__(self,pos,groups,obstacle_sprites):
+    def __init__(self, pos: Tuple[int, int], groups: List[Group], obstacle_sprites):
         super().__init__(groups, is_player = True)
         self.image = image_provider.provideWithAlphaConvert(Path("./graphics/test/player.png"))
         self.rect = self.image.get_rect(topleft = pos)
@@ -23,7 +25,7 @@ class Player(Entity):
         self.attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
-        self.obstacle_sprites = obstacle_sprites
+        self._obstacle_sprites = obstacle_sprites
 
         # weapon
         # self.create_attack = create_attack
@@ -58,6 +60,11 @@ class Player(Entity):
         # import a sound
         self.weapon_attack_sound = pygame.mixer.Sound('./audio/sword.wav')
         self.weapon_attack_sound.set_volume(0.4)
+
+    @property
+    def obstacle_sprites(self) -> object:
+        print("here")
+        return self._obstacle_sprites
 
     def import_player_assets(self):
         character_path = '../graphics/player/'
