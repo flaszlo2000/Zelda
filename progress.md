@@ -4,18 +4,24 @@
 - clean code and weekly refactors
 
 ### p1) (doing)
-- refactor player.py and create abstractions for entities 
+- refactor player.py and create abstractions for entities:
+- make sound disabled 
 
 ### p2)
 - trial ee listener
-- reconstruct folder and 
+- reconstruct folder and file structure
+- enemies
+
 
 ### p3)
 - fix animations  
 - fix (or redo) fighting "system"
-
+- keybindings for ui elements:
+    - on menu
+    - shortcuts (quicksave)
 ### p4)
 - sound
+- additional ais
 
 #
 
@@ -43,5 +49,8 @@
 8. dungeons
 9. bosses ?
 10. mvc ?
+
+## NOTE
+life is good
 
 ## DONE
