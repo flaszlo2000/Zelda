@@ -12,6 +12,7 @@ from magic import MagicPlayer
 from upgrade import Upgrade
 
 from abc import ABC, abstractmethod
+from typing import List
 
 from settings import TILESIZE, ENTITY_DICT
 
@@ -36,6 +37,8 @@ class BaseLevel(ABC):
         else:
             self.sprite_groups = sprite_groups
 
+        self.player = self.createMap()
+
     @staticmethod
     @abstractmethod
     def _fetchLayouts() -> dict:...
@@ -45,10 +48,10 @@ class BaseLevel(ABC):
     def _fetchGraphics() -> dict:...
 
     @abstractmethod
-    def createMap(self) -> None:...
+    def createMap(self) -> Player:...
 
     def getPlayer(self) -> Player:
-        return self.player # NOTE: atm this has been created in create_map
+        return self.player
 #endregion
 
 
@@ -64,13 +67,13 @@ class Level:
         self.game_pauser = game_pauser
         
         # sprite setup
-        self.create_map()
+        self.player = self.create_map()
 
-        self.upgrade = Upgrade(self.player)
+        self.upgrade = Upgrade(self.player) # FIXME: refactor
 
         # particles
-        self.animation_player = AnimationPlayer()
-        self.magic_player = MagicPlayer(self.animation_player)
+        self.animation_player = AnimationPlayer() # NOTE: does this need refactor?
+        self.magic_player = MagicPlayer(self.animation_player) # NOTE: does this need refactor?
 
     @staticmethod
     def _fetchLayouts() -> dict:
@@ -93,9 +96,13 @@ class Level:
 
         return graphics
 
-    def create_map(self):
+    def create_map(self) -> Player:
+        player: Player = None
+        was_not_found: List[str] = [] # to store the ids of the not found entities
+
         layouts = Level._fetchLayouts()
         graphics = Level._fetchGraphics()
+
 
         for layout_name, grid in layouts.items():
             for y, row in enumerate(grid):
@@ -116,7 +123,10 @@ class Level:
 
                     if layout_name == 'entities':
                         if col not in ENTITY_DICT.keys():
-                            print(f"{col} id hasn't been found in the ENTITY_DICT!")
+                            if col not in was_not_found:
+                                was_not_found.append(col)
+                                print(f"{col} id hasn't been found in the ENTITY_DICT!")
+
                             continue
 
                         current_entity = ENTITY_DICT[col](
@@ -126,7 +136,7 @@ class Level:
                         )
 
                         if current_entity.isPlayer():
-                            self.player = current_entity # FIXME: move this to __init__ level
+                            player = current_entity
 
                         # if col == '390': monster_name = 'bamboo'
                         # elif col == '391': monster_name = 'spirit'
@@ -140,6 +150,7 @@ class Level:
                         #     self.damage_player,
                         #     self.trigger_death_particles,
                         #     self.add_exp)
+        return player
 
     #region TODO: move this to player level
     def create_attack(self):
