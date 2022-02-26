@@ -36,7 +36,7 @@ class Player(Entity):
         self.weapon_index = 0
 
         # additional hotfix
-        self.weapon_data = Player.getNamesFromGameData(setting_handler.setting_loader["magic"])
+        self.weapon_data = Player.getNamesFromGameData(setting_handler.setting_loader["weapons"])
 
         self.weapon = self.weapon_data[self.weapon_index]
         self.can_switch_weapon = True
@@ -138,12 +138,9 @@ class Player(Entity):
             if keys[pygame.K_q] and self.can_switch_weapon:
                 self.can_switch_weapon = False
                 self.weapon_switch_time = pygame.time.get_ticks()
-                
-                if self.weapon_index < len(self.weapon_data) - 1:
-                    self.weapon_index += 1
-                else:
-                    self.weapon_index = 0
-                    
+
+                self.weapon_index = (self.weapon_index + 1) % len(self.weapon_data)
+
                 self.weapon = self.weapon_data[self.weapon_index]
 
             if keys[pygame.K_e] and self.can_switch_magic:
