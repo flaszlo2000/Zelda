@@ -1,7 +1,7 @@
 from functools import lru_cache
 
 from . data_loader import DataLoader
-from settings import DATA_LOADERS
+from .  import DATA_LOADERS
 
 
 class DataLoaderFactory:

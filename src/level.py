@@ -14,7 +14,7 @@ from upgrade import Upgrade
 from abc import ABC, abstractmethod
 from typing import List
 
-from settings import TILESIZE, ENTITY_DICT
+from setting_handler import TILESIZE, ENTITY_DICT
 
 from game_essentails.game_state import GamePauser
 from game_essentails.tiles.grass import GrassTile
@@ -130,11 +130,10 @@ class Level:
                         if col not in ENTITY_DICT.keys():
                             if col not in was_not_found:
                                 was_not_found.append(col)
-                                print(f"{col} id hasn't been found in the ENTITY_DICT!")
+                                print(f"[*] WARNING: level loading: {col} id hasn't been found in the ENTITY_DICT!")
 
                             continue
                         
-                        print(x, y)
                         current_entity = ENTITY_DICT[col](
                             (x * TILESIZE, y * TILESIZE),
                             [self.sprite_groups.visible_sprites],

@@ -1,5 +1,5 @@
 import pygame
-from settings import *
+from setting_handler import *
 
 class Upgrade:
     def __init__(self,player):

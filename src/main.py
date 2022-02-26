@@ -1,7 +1,7 @@
 import pygame
 import sys, signal
 
-import settings
+import setting_handler as settings
 from game_essentails.level_handling.level_handler import LevelHandler
 from game_essentails.game_state import GameState
 from ui.ui import UI

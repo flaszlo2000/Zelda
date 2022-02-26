@@ -1,5 +1,5 @@
 import pygame 
-from settings import *
+import setting_handler
 from data_loader import import_folder
 from entity import Entity
 
@@ -8,6 +8,7 @@ from typing import Tuple, List, Any
 from pygame.sprite import Group
 
 from scripts.image_provider import image_provider
+from game_essentails.data.models.base import GameData
 
 
 class Player(Entity):
@@ -15,7 +16,7 @@ class Player(Entity):
         super().__init__(groups, is_player = True)
         self.image = image_provider.provideWithAlphaConvert(Path("./graphics/test/player.png"))
         self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(-6,HITBOX_OFFSET['player'])
+        self.hitbox = self.rect.inflate(-6, setting_handler.HITBOX_OFFSET['player'])
 
         # NOTE: for this line, everything is implemented
 
@@ -33,7 +34,11 @@ class Player(Entity):
         # self.create_attack = create_attack
         # self.destroy_attack = destroy_attack
         self.weapon_index = 0
-        self.weapon = list(weapon_data.keys())[self.weapon_index]
+
+        # additional hotfix
+        self.weapon_data = Player.getNamesFromGameData(setting_handler.setting_loader["magic"])
+
+        self.weapon = self.weapon_data[self.weapon_index]
         self.can_switch_weapon = True
         self.weapon_switch_time = None
         self.switch_duration_cooldown = 200
@@ -41,7 +46,11 @@ class Player(Entity):
         # magic 
         # self.create_magic = create_magic
         self.magic_index = 0
-        self.magic = list(magic_data.keys())[self.magic_index]
+
+        # additional hotfix as well
+        self.magic_data = Player.getNamesFromGameData(setting_handler.setting_loader["magic"])
+
+        self.magic = self.magic_data[self.magic_index]
         self.can_switch_magic = True
         self.magic_switch_time = None
 
@@ -62,6 +71,12 @@ class Player(Entity):
         # import a sound
         self.weapon_attack_sound = pygame.mixer.Sound('./audio/sword.wav')
         self.weapon_attack_sound.set_volume(0.4)
+
+    @staticmethod
+    def getNamesFromGameData(game_data: List[GameData]) -> List[str]:
+        result = [data.name for data in game_data]
+
+        return result
 
     @property
     def obstacle_sprites(self) -> object:
@@ -114,9 +129,9 @@ class Player(Entity):
             if keys[pygame.K_LCTRL]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
-                style = list(magic_data.keys())[self.magic_index]
-                strength = list(magic_data.values())[self.magic_index]['strength'] + self.stats['magic']
-                cost = list(magic_data.values())[self.magic_index]['cost']
+                # style = list(magic_data.keys())[self.magic_index]
+                # strength = list(magic_data.values())[self.magic_index]['strength'] + self.stats['magic']
+                # cost = list(magic_data.values())[self.magic_index]['cost']
                 # self.create_magic(style,strength,cost)
                 print("create magic")
 
@@ -124,23 +139,23 @@ class Player(Entity):
                 self.can_switch_weapon = False
                 self.weapon_switch_time = pygame.time.get_ticks()
                 
-                if self.weapon_index < len(list(weapon_data.keys())) - 1:
+                if self.weapon_index < len(self.weapon_data) - 1:
                     self.weapon_index += 1
                 else:
                     self.weapon_index = 0
                     
-                self.weapon = list(weapon_data.keys())[self.weapon_index]
+                self.weapon = self.weapon_data[self.weapon_index]
 
             if keys[pygame.K_e] and self.can_switch_magic:
                 self.can_switch_magic = False
                 self.magic_switch_time = pygame.time.get_ticks()
                 
-                if self.magic_index < len(list(magic_data.keys())) - 1:
+                if self.magic_index < len(self.magic_data) - 1:
                     self.magic_index += 1
                 else:
                     self.magic_index = 0
 
-                self.magic = list(magic_data.keys())[self.magic_index]
+                self.magic = self.magic_data[self.magic_index]
 
     def get_status(self):
 
@@ -165,7 +180,7 @@ class Player(Entity):
         current_time = pygame.time.get_ticks()
 
         if self.attacking:
-            if current_time - self.attack_time >= self.attack_cooldown + weapon_data[self.weapon]['cooldown']:
+            if current_time - self.attack_time >= self.attack_cooldown + self.weapon_data[self.weapon]['cooldown']:
                 self.attacking = False
                 #self.destroy_attack()
                 print("destroy attack")
@@ -204,12 +219,12 @@ class Player(Entity):
 
     def get_full_weapon_damage(self):
         base_damage = self.stats['attack']
-        weapon_damage = weapon_data[self.weapon]['damage']
+        weapon_damage = self.weapon_data[self.weapon]['damage']
         return base_damage + weapon_damage
 
     def get_full_magic_damage(self):
         base_damage = self.stats['magic']
-        spell_damage = magic_data[self.magic]['strength']
+        spell_damage = self.magic_data[self.magic]['strength']
         return base_damage + spell_damage
 
     def get_value_by_index(self,index):

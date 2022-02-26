@@ -1,4 +1,4 @@
-import settings
+import setting_handler as settings
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame import Rect as PygameRect
 from pygame.display import get_surface

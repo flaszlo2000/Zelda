@@ -1,7 +1,8 @@
 import pygame
-import settings
+import setting_handler as settings
 
 from . menu import Menu
+from scripts.image_provider import image_provider
 
 
 class UI:
@@ -16,16 +17,15 @@ class UI:
 
         # convert weapon dictionary
         self.weapon_graphics = []
-        for weapon in settings.weapon_data.values():
-            path = weapon['graphic']
-            weapon = pygame.image.load(path).convert_alpha()
-            self.weapon_graphics.append(weapon)
+        for weapon in settings.setting_loader["weapons"]:
+            weapon_image = image_provider.provideWithAlphaConvert(weapon.graphics_src)
+            self.weapon_graphics.append(weapon_image)
 
         # convert magic dictionary
         self.magic_graphics = []
-        for magic in settings.magic_data.values():
-            magic = pygame.image.load(magic['graphic']).convert_alpha()
-            self.magic_graphics.append(magic)
+        for magic in settings.setting_loader["magic"]:
+            magic_image = image_provider.provideWithAlphaConvert(magic.graphics_src)
+            self.magic_graphics.append(magic_image)
 
         # menu
         self.menu = Menu()

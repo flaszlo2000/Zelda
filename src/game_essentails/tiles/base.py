@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from game_essentails.sprite_groups import SpriteGroups
-from settings import HITBOX_OFFSET, TILESIZE
+from setting_handler import HITBOX_OFFSET, TILESIZE
 
 
 class AbstractBaseTile(Sprite, ABC):

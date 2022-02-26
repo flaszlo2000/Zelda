@@ -1,5 +1,5 @@
 import pygame
-from settings import *
+from setting_handler import *
 from random import randint
 
 class MagicPlayer:

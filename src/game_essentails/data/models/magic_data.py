@@ -5,7 +5,7 @@ from . base import GameData
 
 
 @dataclass
-class WeaponData(GameData):
-    cooldown: int
-    damage: int
+class MagicData(GameData):
+    strength: int
+    cost: int
     graphics_src: Optional[str] = field(init = True)

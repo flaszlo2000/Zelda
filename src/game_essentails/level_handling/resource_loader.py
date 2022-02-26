@@ -34,4 +34,5 @@ class SettingLoader:
 if __name__ == "__main__":
     setting_loader = SettingLoader(Path("./settings"))
     setting_loader.importSettings()
-    print(setting_loader["monsters"])
+
+    print("breakpoint")

@@ -1,5 +1,5 @@
 from . base import AbstractBaseTile
-from settings import TILESIZE
+from setting_handler import TILESIZE
 
 
 class ObjectTile(AbstractBaseTile):

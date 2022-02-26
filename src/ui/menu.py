@@ -1,4 +1,4 @@
-import settings
+import setting_handler as settings
 from pygame import Rect
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect

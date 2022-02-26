@@ -1,0 +1,12 @@
+{
+    "flame": {
+        "strength": 5,
+        "cost": 20,
+        "graphics_src": "./graphics/particles/flame/fire.png"
+    },
+    "heal": {
+        "strength": 20,
+        "cost": 10,
+        "graphics_src": "./graphics/particles/heal/heal.png"
+    }
+}
