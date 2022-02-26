@@ -35,4 +35,4 @@ if __name__ == "__main__":
     setting_loader = SettingLoader(Path("./settings"))
     setting_loader.importSettings()
 
-    print("breakpoint")
+    print(setting_loader["common"])
