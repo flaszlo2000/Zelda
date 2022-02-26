@@ -8,5 +8,10 @@
         "strength": 20,
         "cost": 10,
         "graphics_src": "./graphics/particles/heal/heal.png"
+    },
+    "test_magic": {
+        "strength": 55,
+        "cost": 25,
+        "graphics_src": "./graphics/particles/bamboo/0.png"
     }
 }

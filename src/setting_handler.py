@@ -42,7 +42,6 @@ from typing import Dict
 from pathlib import Path
 
 from player import Player
-from game_essentails.data.loaders.data_loader import DataLoader, JsonDataLoader
 from game_essentails.level_handling.resource_loader import SettingLoader
 
 
