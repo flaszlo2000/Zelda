@@ -1,0 +1,27 @@
+{
+    "sword": {
+        "cooldown": 100,
+        "damage": 15,
+        "graphics_src": "./graphics/weapons/sword/full.png"
+    },
+    "lance": {
+        "cooldown": 400,
+        "damage": 30,
+        "graphics_src": "./graphics/weapons/lance/full.png"
+    },
+    "axe": {
+        "cooldown": 300,
+        "damage": 20,
+        "graphics_src": "./graphics/weapons/axe/full.png"
+    },
+    "rapier": {
+        "cooldown": 50,
+        "damage": 8,
+        "graphics_src": "./graphics/weapons/rapier/full.png"
+    },
+    "sai": {
+        "cooldown": 80,
+        "damage": 10,
+        "graphics_src": "./graphics/weapons/sai/full.png"
+    }
+}

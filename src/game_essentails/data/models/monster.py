@@ -4,8 +4,6 @@ from . base import GameData
 
 @dataclass
 class MonsterData(GameData):
-    name: str
-
     # basic stats
     health: int
     damage: int

@@ -1,1 +1,5 @@
-class GameData:...
+from dataclasses import dataclass
+
+@dataclass
+class GameData:
+    name: str
