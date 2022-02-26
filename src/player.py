@@ -17,15 +17,17 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft = pos)
         self.hitbox = self.rect.inflate(-6,HITBOX_OFFSET['player'])
 
+        # NOTE: for this line, everything is implemented
+
         # graphics setup
-        self.import_player_assets()
-        self.status = 'down'
+        self.import_player_assets() # NOTE: enemy.py has similar method called import_graphics
+        self.status = 'down' # NOTE: needed for other entities as well
 
         # movement 
         self.attacking = False
-        self.attack_cooldown = 400
-        self.attack_time = None
-        self._obstacle_sprites = obstacle_sprites
+        self.attack_cooldown = 400 # NOTE: needed for other entities as well
+        self.attack_time = None # NOTE: needed for other entities as well
+        self._obstacle_sprites = obstacle_sprites # NOTE: implemented, needed for collision
 
         # weapon
         # self.create_attack = create_attack

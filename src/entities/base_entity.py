@@ -1,6 +1,7 @@
 from pygame.math import Vector2
 from pygame.time import get_ticks
 from pygame.surface import Surface
+from pygame.sprite import Group
 from math import sin
 from typing import List
 from abc import ABC, abstractmethod
@@ -8,11 +9,12 @@ from abc import ABC, abstractmethod
 from game_essentails.tiles.base_tile import NormalTile
 from game_essentails.sprite_groups import SpriteGroups
 
-
 class BaseEntity(NormalTile, ABC):
     def __init__(self, sprite_groups: SpriteGroups, _position: List[int], image_surface: Surface):
         super().__init__(sprite_groups, _position, image_surface)
+
         self._is_player = False
+        self.obstacle_sprites: Group = sprite_groups.obstacle_sprites # this is a group of AbstractBaseTile
 
     def setPlayer(self, new_state: bool) -> None:
         self._is_player = new_state
@@ -25,14 +27,19 @@ class BaseEntity(NormalTile, ABC):
     def move(self, speed) -> None:...
 
     @abstractmethod
-    def collision(self, direction: str) -> None:...
+    def horizontalCollision(self) -> None:...
+
+    @abstractmethod
+    def verticalCollision(self) -> None:...
 
 class LivingEntity(BaseEntity):
     def __init__(self, sprite_groups: SpriteGroups, _position: List[int], image_surface: Surface):
         super().__init__(sprite_groups, _position, image_surface)
 
-        self.frame_index = 0
+        #region TODO: replace this, I think this is needed for animations and particles
+        self.frame_index = 0 
         self.animation_speed = 0.15
+        #endregion
         self.direction = Vector2()
 
     def move(self,speed):
@@ -40,27 +47,26 @@ class LivingEntity(BaseEntity):
             self.direction = self.direction.normalize()
 
         self.hitbox.x += self.direction.x * speed
-        self.collision('horizontal')
+        self.horizontalCollision()
         self.hitbox.y += self.direction.y * speed
-        self.collision('vertical')
+        self.verticalCollision()
         self.rect.center = self.hitbox.center
 
-    def collision(self, direction: str):
-        if direction == 'horizontal':
-            for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.x > 0: # moving right
-                        self.hitbox.right = sprite.hitbox.left
-                    if self.direction.x < 0: # moving left
-                        self.hitbox.left = sprite.hitbox.right
+    def horizontalCollision(self) -> None:
+        for sprite in self.obstacle_sprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                if self.direction.x > 0: # moving right
+                    self.hitbox.right = sprite.hitbox.left
+                if self.direction.x < 0: # moving left
+                    self.hitbox.left = sprite.hitbox.right
 
-        if direction == 'vertical':
-            for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.y > 0: # moving down
-                        self.hitbox.bottom = sprite.hitbox.top
-                    if self.direction.y < 0: # moving up
-                        self.hitbox.top = sprite.hitbox.bottom
+    def verticalCollision(self) -> None:
+        for sprite in self.obstacle_sprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                if self.direction.y > 0: # moving down
+                    self.hitbox.bottom = sprite.hitbox.top
+                if self.direction.y < 0: # moving up
+                    self.hitbox.top = sprite.hitbox.bottom
 
     def wave_value(self):
         value = sin(get_ticks())

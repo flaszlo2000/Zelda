@@ -7,6 +7,11 @@
 - refactor player.py and create abstractions for entities:
     - [x] entities/player.py can be drawn with NormalTile
     - [] use new entities/player.py for the character
+- because player.py has confusing statloading, get together the settings.py
+    - [x] mvc models for settings
+    - [x] game_essentails/data/loaders/data_loader.py to be able to load different kind of files as well
+    - [x] game_essentails/level_handling/resource_loader.py to load datas dynamically 
+    - [] setup every setting file into settings folder
 
 - make sound disabled 
 
@@ -57,6 +62,7 @@
 8. dungeons
 9. bosses ?
 10. mvc ?
+11. modding api
 
 ## NOTE
 life is good
