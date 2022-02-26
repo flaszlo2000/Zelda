@@ -5,11 +5,16 @@
 
 ### p1) (doing)
 - refactor player.py and create abstractions for entities:
+    - [x] entities/player.py can be drawn with NormalTile
+    - [] use new entities/player.py for the character
+
 - make sound disabled 
 
 ### p2)
 - trial ee listener
-- reconstruct folder and file structure
+- reconstruct folder and file structure:
+    - [x] level_handler folder:
+        - [] data_loader into this folder, with image_provider
 - enemies
 
 
@@ -18,7 +23,10 @@
 - fix (or redo) fighting "system"
 - keybindings for ui elements:
     - on menu
-    - shortcuts (quicksave)
+    - shortcuts (quicksave):
+        - [x] exit
+        - [] save
+        - [] load
 ### p4)
 - sound
 - additional ais

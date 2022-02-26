@@ -1,20 +1,35 @@
-from pygame.sprite import Sprite
 from pygame.math import Vector2
 from pygame.time import get_ticks
+from pygame.surface import Surface
 from math import sin
+from typing import List
+from abc import ABC, abstractmethod
+
+from game_essentails.tiles.base_tile import NormalTile
+from game_essentails.sprite_groups import SpriteGroups
 
 
-class BaseEntity(Sprite):
-    def __init__(self, groups, is_player: bool):
-        super().__init__(groups)
-        self._is_player = is_player
+class BaseEntity(NormalTile, ABC):
+    def __init__(self, sprite_groups: SpriteGroups, _position: List[int], image_surface: Surface):
+        super().__init__(sprite_groups, _position, image_surface)
+        self._is_player = False
+
+    def setPlayer(self, new_state: bool) -> None:
+        self._is_player = new_state
 
     def isPlayer(self) -> bool:
         return self._is_player
 
-class Entity(BaseEntity):
-    def __init__(self, groups, is_player: bool = False):
-        super().__init__(groups, is_player)
+    # FIXME: check speed and direction is needed
+    @abstractmethod
+    def move(self, speed) -> None:...
+
+    @abstractmethod
+    def collision(self, direction: str) -> None:...
+
+class LivingEntity(BaseEntity):
+    def __init__(self, sprite_groups: SpriteGroups, _position: List[int], image_surface: Surface):
+        super().__init__(sprite_groups, _position, image_surface)
 
         self.frame_index = 0
         self.animation_speed = 0.15

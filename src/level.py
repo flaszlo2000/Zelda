@@ -22,6 +22,11 @@ from game_essentails.tiles.real_object_tile import RealObjectTile
 from game_essentails.tiles.boundary import BoundaryTile
 from game_essentails.sprite_groups import SpriteGroups
 
+
+#region TEST
+from entities.player import Player as NewPlayer
+#endregion
+
 #region future baseclasses
 
 class BaseLevel(ABC):
@@ -128,7 +133,8 @@ class Level:
                                 print(f"{col} id hasn't been found in the ENTITY_DICT!")
 
                             continue
-
+                        
+                        print(x, y)
                         current_entity = ENTITY_DICT[col](
                             (x * TILESIZE, y * TILESIZE),
                             [self.sprite_groups.visible_sprites],
@@ -150,6 +156,11 @@ class Level:
                         #     self.damage_player,
                         #     self.trigger_death_particles,
                         #     self.add_exp)
+        
+        #region TEST # TODO: remove this
+        test_new_player = NewPlayer(self.sprite_groups, (33, 21))
+        #endregion
+
         return player
 
     #region TODO: move this to player level

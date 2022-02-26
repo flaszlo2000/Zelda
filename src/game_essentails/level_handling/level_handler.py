@@ -1,7 +1,7 @@
 import pygame
 
 from level import Level
-from . game_state import GameState
+from ..game_state import GameState
 
 
 class LevelHandler:

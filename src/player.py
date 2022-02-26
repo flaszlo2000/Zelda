@@ -63,7 +63,7 @@ class Player(Entity):
 
     @property
     def obstacle_sprites(self) -> object:
-        print("here")
+        # print("here")
         return self._obstacle_sprites
 
     def import_player_assets(self):
