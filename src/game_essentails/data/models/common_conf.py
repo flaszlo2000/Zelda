@@ -1,9 +1,10 @@
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import dataclass, field
+from typing import Union
 
 from . base import GameData
 
 
 @dataclass
 class CommonConfData(GameData):
-    value: Any
+    value: Union[str, int]
+    is_numeric: bool = field(default = False)
