@@ -1,4 +1,3 @@
-import setting_handler as settings
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame import Rect as PygameRect
 from pygame.display import get_surface
@@ -11,15 +10,20 @@ from abc import ABC, abstractmethod
 
 from scripts.observer import KeyObserver, EventObserverMsg, CallbackObserver
 from game_essentails.events import key_broadcast_subject
+from setting_handler import setting_loader
 
 
 @dataclass
 class ButtonText:
     "Text ontop the button"
     text: str = field(default = "")
-    font: Font = field(default = Font(settings.UI_FONT, settings.UI_FONT_SIZE))
+    font: Font = field(default = Font(
+        setting_loader.getSingleValueFrom("common", "ui_font"),
+        setting_loader.getSingleValueFrom("common", "ui_font_size")
+        )
+    )
     antialias: bool = field(default = False)
-    color: str = field(default = settings.TEXT_COLOR)
+    color: str = field(default = setting_loader.getSingleValueFrom("common", "text_color"))
     should_capitalize: bool = field(default = True)
 
     def renderFont(self) -> Surface:

@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Callable, Any
+from typing import Any, Callable, Dict, List, Optional
+
 from pygame.event import Event
+
 
 #region ObserverMsg
 class ObserverMsg:
@@ -86,29 +88,4 @@ class KeySubject(Subject):
             attached_observer.updateByNotification(msg)
 
     def getEventList(self) -> List[int]:
-        return self._observers.keys()
-
-if __name__ == "__main__":
-    # Testing
-    import pygame
-
-    key_observers = [KeyObserver() for _ in range(3)]
-    key_subject = KeySubject()
-    
-    key_subject.attach(key_observers[0], pygame.K_ESCAPE)
-    key_subject.attach(key_observers[1], pygame.K_ESCAPE)
-    key_subject.attach(key_observers[2], pygame.K_0)
-    key_subject.attach(key_observers[2], pygame.K_ESCAPE)
-
-    key_subject.notify(pygame.K_ESCAPE)
-
-    key_subject.detach(key_observers[2])
-    print("remove")
-
-    key_subject.notify(pygame.K_ESCAPE)
-    key_subject.notify(pygame.K_0)
-
-    key_subject.detachFrom(key_observers[0], pygame.K_ESCAPE)
-    print("remove from")
-
-    key_subject.notify(pygame.K_ESCAPE)
+        return list(self._observers.keys())

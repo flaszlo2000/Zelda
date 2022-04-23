@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from os import listdir
-from typing import Dict, List
+from typing import Dict, List, Any
 
-from game_essentails.data.models.base import GameData
+from game_essentails.data.models.base import GameData, SingleValueData
 from game_essentails.data.loaders.loader_factory import DataLoaderFactory
 from game_essentails.data.models import HANDLER_MAP
 
@@ -31,10 +31,29 @@ class SettingLoader:
     def __getitem__(self, __name: str) -> List[GameData]:
         return self.__settings[__name]
 
+    def __getSingleValueDataDict(self) -> Dict[str, List[SingleValueData]]:
+        result: Dict[str, List[SingleValueData]] = dict()
+
+        for key, setting_list in self.__settings.items():
+            if issubclass(type(setting_list[0]), SingleValueData):
+                result[key] = setting_list
+
+        return result
+
+    def getSingleValueFrom(self, _from: str, __name: str) -> Any:
+        "Generalized method to access single value settings"
+        single_value_settings: Dict[str, List[SingleValueData]] = self.__getSingleValueDataDict()
+
+        for single_value_setting in single_value_settings[_from]:
+            if single_value_setting.name == __name:
+                return single_value_setting.value
+        else:
+            raise KeyError(f"[*] ERROR: search for setting: *{__name}* was not found in *{_from}*!")
+
+
 if __name__ == "__main__":
     setting_loader = SettingLoader(Path("./settings"))
     setting_loader.importSettings()
 
-    from pprint import pprint
-
-    pprint(setting_loader["common"])
+    print(setting_loader.getSingleValueFrom("common", "ui_font"))
+    print(setting_loader.getSingleValueFrom("hitbox_offset", "player"))

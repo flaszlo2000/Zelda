@@ -1,34 +1,29 @@
-import pygame 
-from pygame.surface import Surface
-from player import Player
-from debug import debug
-from data_loader import *
-from random import choice, randint
-from weapon import Weapon
-from ui.ui import UI
-from enemy import Enemy
-from particles import AnimationPlayer
-from magic import MagicPlayer
-from upgrade import Upgrade
-
 from abc import ABC, abstractmethod
+from random import choice, randint
 from typing import List
 
-from setting_handler import TILESIZE, ENTITY_DICT
+import pygame
+from pygame.surface import Surface
 
+from data_loader import *
+# from player import Player
+from debug import debug
+from enemy import Enemy
+from entities.player import Player
 from game_essentails.game_state import GamePauser
+from game_essentails.sprite_groups import SpriteGroups
+from game_essentails.tiles.boundary import BoundaryTile
 from game_essentails.tiles.grass import GrassTile
 from game_essentails.tiles.real_object_tile import RealObjectTile
-from game_essentails.tiles.boundary import BoundaryTile
-from game_essentails.sprite_groups import SpriteGroups
+from magic import MagicPlayer
+from particles import AnimationPlayer
+from setting_handler import ENTITY_DICT, setting_loader
+from ui.ui import UI
+from upgrade import Upgrade
+from weapon import Weapon
 
-
-#region TEST
-from entities.player import Player as NewPlayer
-#endregion
 
 #region future baseclasses
-
 class BaseLevel(ABC):
     def __init__(self, game_pauser: GamePauser, sprite_groups: SpriteGroups = None):
         self.display_surface = pygame.display.get_surface()
@@ -60,7 +55,7 @@ class BaseLevel(ABC):
 #endregion
 
 
-class Level:
+class Level: 
     def __init__(self, game_pauser: GamePauser, sprite_groups: SpriteGroups = None):
         self.display_surface = pygame.display.get_surface()
 
@@ -107,6 +102,7 @@ class Level:
 
         layouts = Level._fetchLayouts()
         graphics = Level._fetchGraphics()
+        tile_size = setting_loader.common["tile_size"]
 
 
         for layout_name, grid in layouts.items():
@@ -116,7 +112,7 @@ class Level:
 
                     # NOTE: is it ok to not store anywhere these objects?
                     if layout_name == 'boundary':
-                        BoundaryTile(self.sprite_groups, [x, y], Surface((TILESIZE,TILESIZE)))
+                        BoundaryTile(self.sprite_groups, [x, y], Surface((tile_size, tile_size)))
 
                     if layout_name == 'grass':
                         random_grass_image = choice(graphics['grass'])
@@ -135,7 +131,7 @@ class Level:
                             continue
                         
                         current_entity = ENTITY_DICT[col](
-                            (x * TILESIZE, y * TILESIZE),
+                            (x * tile_size, y * tile_size),
                             [self.sprite_groups.visible_sprites],
                             self.sprite_groups.obstacle_sprites
                         )
@@ -157,7 +153,7 @@ class Level:
                         #     self.add_exp)
         
         #region TEST # TODO: remove this
-        test_new_player = NewPlayer(self.sprite_groups, (33, 21))
+        test_new_player = Player(self.sprite_groups, (33, 21))
         #endregion
 
         return player

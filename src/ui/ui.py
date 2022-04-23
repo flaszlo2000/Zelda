@@ -3,14 +3,16 @@ import setting_handler as settings
 
 from . menu import Menu
 from scripts.image_provider import image_provider
-
+from setting_handler import setting_loader
 
 class UI:
     def __init__(self):
         # general 
         self.display_surface = pygame.display.get_surface()
-        self.font = pygame.font.Font(settings.UI_FONT, settings.UI_FONT_SIZE)
-
+        self.font = pygame.font.Font(
+            setting_loader.getSingleValueFrom("common", "ui_font"),
+            setting_loader.getSingleValueFrom("common", "ui_font_size")
+        )
         # bar setup 
         self.health_bar_rect = pygame.Rect(10, 10, settings.HEALTH_BAR_WIDTH, settings.BAR_HEIGHT)
         self.energy_bar_rect = pygame.Rect(10, 34, settings.ENERGY_BAR_WIDTH, settings.BAR_HEIGHT)

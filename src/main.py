@@ -1,13 +1,13 @@
 import pygame
 import sys, signal
 
-import setting_handler as settings
 from game_essentails.level_handling.level_handler import LevelHandler
 from game_essentails.game_state import GameState
 from ui.ui import UI
 from level import Level
 from game_essentails.events import key_broadcast_subject
 from scripts.observer import EventObserverMsg, CallbackObserver
+from setting_handler import setting_loader
 
 
 class Game:
@@ -29,7 +29,7 @@ class Game:
 
     def __pygameInit(self) -> None:
         pygame.init()
-        self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGTH))
+        self.screen = pygame.display.set_mode((setting_loader.getSingleValueFrom("common", "width"), setting_loader.getSingleValueFrom("common", "height")))
         pygame.display.set_caption('Zelda')
         self.clock = pygame.time.Clock()
 
