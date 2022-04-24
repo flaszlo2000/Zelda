@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
-from pathlib import Path
 from os import listdir
-from typing import Dict, List, Any
+from pathlib import Path
+from typing import Any, Dict, List, cast
 
-from game_essentails.data.models.base import GameData, SingleValueData
 from game_essentails.data.loaders.loader_factory import DataLoaderFactory
 from game_essentails.data.models import HANDLER_MAP
+from game_essentails.data.models.base import GameData, SingleValueData
 
 
 @dataclass
@@ -36,7 +36,7 @@ class SettingLoader:
 
         for key, setting_list in self.__settings.items():
             if issubclass(type(setting_list[0]), SingleValueData):
-                result[key] = setting_list
+                result[key] = cast(List[SingleValueData], setting_list)
 
         return result
 

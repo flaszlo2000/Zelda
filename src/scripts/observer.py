@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
 
 from pygame.event import Event
@@ -14,13 +14,10 @@ class ObserverMsg:
     def __str__(self) -> str:
         return str(self.value)
 
-@dataclass
-class StrObserverMsg(ObserverMsg):
-    _value: str = field(default = "")
-
+class StrObserverMsg(str, ObserverMsg):
     @property
     def value(self) -> str:
-        return self._value
+        return super().__str__() # NOTE: thx for the __mro__
 
 @dataclass
 class EventObserverMsg(ObserverMsg):
@@ -60,7 +57,7 @@ class Subject(ABC):
     def detachFrom(self, observer: Observer, event: int) -> None:...
 
     @abstractmethod
-    def notify(self, event: int, msg: Optional[str] = None) -> None:...
+    def notify(self, event: int, msg: Optional[ObserverMsg] = None) -> None:...
 
 class KeySubject(Subject):
     def attach(self, observer: Observer, event: int) -> None:
@@ -80,7 +77,10 @@ class KeySubject(Subject):
 
         self._observers[event].remove(observer)
 
-    def notify(self, event: int, msg: ObserverMsg = StrObserverMsg()) -> None:
+    def notify(self, event: int, msg: Optional[ObserverMsg] = None) -> None:
+        if msg is None:
+            msg = StrObserverMsg()
+
         if not event in self._observers.keys():
             raise KeyError(f"{event} is not present between the keys of the events")
         

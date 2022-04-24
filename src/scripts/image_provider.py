@@ -1,7 +1,8 @@
-from typing import Dict, Union
 from pathlib import Path
-from pygame import Surface
+from typing import Dict, Union
+
 from pygame.image import load as pygame_image_load
+from pygame.surface import Surface
 
 
 class ImageProvider:
@@ -10,12 +11,10 @@ class ImageProvider:
 
     @staticmethod
     def _checkPathType(image_path: Union[str, Path]) -> Path:
-        result = image_path
-
         if not isinstance(image_path, Path):
-            result = Path(image_path)
+            image_path = Path(image_path)
 
-        return result
+        return image_path
 
     # TODO: make this cached
     def provide(self, image_path: Union[str, Path]) -> Surface:
