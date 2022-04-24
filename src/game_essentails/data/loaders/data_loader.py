@@ -7,15 +7,14 @@ from typing import Generic, List, Type, TypeVar, Union
 from game_essentails.data.models.base import GameData, SingleValueData
 from game_essentails.data.models.common_conf import CommonConfData
 
-T = TypeVar("T")
-
+T = TypeVar("T", bound=GameData)
 class DataLoader(ABC, Generic[T]):
     @abstractmethod
     def loadData(self, file_path: Path, dataclass_to_represent: Type[T]) -> List[T]:...
 
 class JsonDataLoader(DataLoader[Union[GameData, SingleValueData]]):
-    def loadData(self, file_path: Path, dataclass_to_represent: Type[Union[GameData, SingleValueData]]) -> List[GameData]:
-        result: List[GameData] = list()
+    def loadData(self, file_path: Path, dataclass_to_represent: Type[Union[GameData, SingleValueData]]) -> List[Union[GameData, SingleValueData]]:
+        result: List[Union[GameData, SingleValueData]] = list()
 
         with open(file_path, 'r') as file:
             data = json.load(file)
@@ -59,7 +58,7 @@ class ConfDataLoader(DataLoader[CommonConfData]):
                 else:
                     if _value.startswith("'") or _value.endswith('"'):
                         # the ConfigParser will read strings like this '"apple"' or "'apple'" so we check this and if needed then remove
-                        _value = ConfDataLoader.clearValue(_value)
+                        final_value = ConfDataLoader.clearValue(_value)
 
                 result.append(dataclass_to_represent(name = key, value = final_value, is_numeric = is_numeric))
 
