@@ -1,4 +1,5 @@
 ## TODO
+graphics_src is needed in the players.json
 
 ### usual)
 - clean code and weekly refactors

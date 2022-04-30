@@ -25,10 +25,10 @@ class PlayerData(GameData):
     magic: StatData
     speed: StatData
 
+    __stat_count: int = field(default = 0)
+
     def __post_init__(self) -> None:
         # NOTE: at the data loading stage StatData is parsed as dict so I have to convert it
-
-        print(self.__annotations__)
         for param, value in self.__dict__.items():
             try:
                 # we don't want to convert all of the dict like objects, only StatData
@@ -40,4 +40,9 @@ class PlayerData(GameData):
                 continue
             else:
                 if isinstance(value, dict) and subclass_check:
+                    self.__stat_count += 1
                     self.__dict__[param] = StatData(**value) # type: ignore
+
+    @property
+    def stat_count(self) -> int:
+        return self.__stat_count

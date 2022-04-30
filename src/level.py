@@ -9,6 +9,7 @@ from data_loader import *
 # from player import Player
 from debug import debug
 from enemy import Enemy
+from entities.entity_dict import ENTITY_DICT
 from entities.player import Player
 from game_essentails.game_state import GamePauser
 from game_essentails.sprite_groups import SpriteGroups
@@ -17,7 +18,7 @@ from game_essentails.tiles.grass import GrassTile
 from game_essentails.tiles.real_object_tile import RealObjectTile
 from magic import MagicPlayer
 from particles import AnimationPlayer
-from setting_handler import ENTITY_DICT, setting_loader
+from setting_handler import setting_loader
 from ui.ui import UI
 from upgrade import Upgrade
 from weapon import Weapon
@@ -102,7 +103,7 @@ class Level:
 
         layouts = Level._fetchLayouts()
         graphics = Level._fetchGraphics()
-        tile_size = setting_loader.common["tile_size"]
+        tile_size = setting_loader.getSingleValueFrom("common", "tile_size")
 
 
         for layout_name, grid in layouts.items():
@@ -130,11 +131,17 @@ class Level:
 
                             continue
                         
+                        # current_entity = ENTITY_DICT[col](
+                        #     (x * tile_size, y * tile_size),
+                        #     [self.sprite_groups.visible_sprites],
+                        #     self.sprite_groups.obstacle_sprites
+                        # )
+
+                        #! FIXME: at this point this coulb be only the Player
                         current_entity = ENTITY_DICT[col](
+                            self.sprite_groups,
                             (x * tile_size, y * tile_size),
-                            [self.sprite_groups.visible_sprites],
-                            self.sprite_groups.obstacle_sprites
-                        )
+                        ) 
 
                         if current_entity.isPlayer():
                             player = current_entity

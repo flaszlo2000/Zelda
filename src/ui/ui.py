@@ -1,35 +1,35 @@
 from dataclasses import dataclass, field
 from typing import Any, List
 
-import pygame
 import setting_handler as settings
 from entities.player import Player
 from game_essentails.data.models.base import GameData
+from pygame import draw
+from pygame.display import get_surface
+from pygame.font import Font
+from pygame.rect import Rect
 from pygame.surface import Surface
 from scripts.image_provider import image_provider
-from setting_handler import setting_loader
+from setting_handler import get_common_setting, setting_loader
 
 from .menu import Menu
 
 
-def get_setting(setting_name: str, _of: str = "common") -> Any:
-    return setting_loader.getSingleValueFrom(_of, setting_name)
-
 @dataclass
 class UI:
-    display_surface: Surface = field(default_factory = pygame.display.get_surface)
+    display_surface: Surface = field(default_factory = get_surface)
     menu: Menu = field(default_factory = Menu)
 
     def __post_init__(self):
         # general 
-        self.font = pygame.font.Font(
-            get_setting("ui_font"),
-            get_setting("ui_font_size")
+        self.font = Font(
+            get_common_setting("ui_font"),
+            get_common_setting("ui_font_size")
         )
 
         # bar setup         
-        self.health_bar_rect = pygame.Rect(10, 10, get_setting("health_bar_width"), get_setting("bar_height"))
-        self.energy_bar_rect = pygame.Rect(10, 34, get_setting("energy_bar_width"), get_setting("bar_height"))
+        self.health_bar_rect = Rect(10, 10, get_common_setting("health_bar_width"), get_common_setting("bar_height"))
+        self.energy_bar_rect = Rect(10, 34, get_common_setting("energy_bar_width"), get_common_setting("bar_height"))
 
         # convert weapon and magic dictionary
         self.weapon_graphics: List[Surface] = UI.getGraphicsListOf(setting_loader["weapons"])
@@ -48,29 +48,29 @@ class UI:
 
         return result_list
 
-    def show_bar(self, current,max_amount,bg_rect,color):
+    def show_bar(self, current_value: int, max_value: int, bg_rect: Rect, color_str: str):
         # draw bg 
-        pygame.draw.rect(self.display_surface, settings.UI_BG_COLOR, bg_rect)
+        draw.rect(self.display_surface, get_common_setting("ui_bg_color"), bg_rect)
 
         # converting stat to pixel
-        ratio = current / max_amount
+        ratio = current_value / max_value
         current_width = bg_rect.width * ratio
         current_rect = bg_rect.copy()
         current_rect.width = current_width
 
         # drawing the bar
-        pygame.draw.rect(self.display_surface,color,current_rect)
-        pygame.draw.rect(self.display_surface, settings.UI_BORDER_COLOR, bg_rect, 3)
+        draw.rect(self.display_surface, color_str, current_rect)
+        draw.rect(self.display_surface, get_common_setting("ui_border_color"), bg_rect, 3)
 
-    def show_exp(self,exp):
-        text_surf = self.font.render(str(int(exp)), False, settings.TEXT_COLOR)
+    def show_exp(self, exp: int):
+        text_surf = self.font.render(str(int(exp)), False, get_common_setting("text_color"))
         x = self.display_surface.get_size()[0] - 20
         y = self.display_surface.get_size()[1] - 20
         text_rect = text_surf.get_rect(bottomright = (x,y))
 
-        pygame.draw.rect(self.display_surface, settings.UI_BG_COLOR, text_rect.inflate(20,20))
+        draw.rect(self.display_surface, get_common_setting("ui_bg_color"), text_rect.inflate(20,20))
         self.display_surface.blit(text_surf,text_rect)
-        pygame.draw.rect(self.display_surface, settings.UI_BORDER_COLOR, text_rect.inflate(20,20),3)
+        draw.rect(self.display_surface, get_common_setting("ui_border_color"), text_rect.inflate(20,20),3)
 
     def selection_box(self,left,top, has_switched):
         bg_rect = pygame.Rect(left,top, settings.ITEM_BOX_SIZE, settings.ITEM_BOX_SIZE)
@@ -96,13 +96,13 @@ class UI:
         self.display_surface.blit(magic_surf,magic_rect)
 
     def display(self, player: Player):
-        self.show_bar(player.health,player.stats['health'],self.health_bar_rect, settings.HEALTH_COLOR)
-        self.show_bar(player.energy,player.stats['energy'],self.energy_bar_rect, settings.ENERGY_COLOR)
+        self.show_bar(player.stats.health.base, player.stats.health.max, self.health_bar_rect, get_common_setting("health_color"))
+        self.show_bar(player.stats.energy.base, player.stats.health.max, self.energy_bar_rect, get_common_setting("energy_color"))
 
         self.show_exp(player.exp)
 
-        self.weapon_overlay(player.weapon_index,not player.can_switch_weapon)
-        self.magic_overlay(player.magic_index,not player.can_switch_magic)
+        # self.weapon_overlay(player.weapon_index,not player.can_switch_weapon)
+        # self.magic_overlay(player.magic_index,not player.can_switch_magic)
 
         self.menu.draw()
 

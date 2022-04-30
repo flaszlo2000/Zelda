@@ -1,13 +1,14 @@
-import setting_handler as settings
+from typing import List
+
+from game_essentails.events import key_broadcast_subject
 from pygame import Rect
+from pygame.constants import QUIT, K_e
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
-from pygame.constants import QUIT, K_e
-from typing import List
+from setting_handler import get_common_setting, setting_loader
 
-from ui.button import ButtonText, ButtonFactory, ButtonGroup, ButtonData
-from game_essentails.events import key_broadcast_subject
+from ui.button import ButtonData, ButtonFactory, ButtonGroup, ButtonText
 
 
 class BasicUiElement: # TODO: move this to a separate file and use it as parent class everywhere
@@ -44,9 +45,9 @@ class Menu(BasicUiElement):
         surface = get_surface()
         screen_size = surface.get_size()
 
-        self.font = Font(settings.UI_FONT, settings.UI_FONT_SIZE)
+        self.font = Font(get_common_setting("ui_font"), get_common_setting("ui_font_size"))
         menu_body = draw_rect(surface, "#00abff", Rect(120, 50, 1000, 600))
-        text_surface = self.font.render("Menu", False, settings.TEXT_COLOR)
+        text_surface = self.font.render("Menu", False, get_common_setting("text_color"))
         surface.blit(text_surface, menu_body)
 
         self._button_group.draw()

@@ -1,30 +1,33 @@
-from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
-from pygame import Rect as PygameRect
-from pygame.display import get_surface
-from pygame.surface import Surface
-from pygame.font import Font
-from pygame.draw import rect as draw_rect
-from dataclasses import dataclass, field
-from typing import List, Callable, Dict, Tuple, Optional
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import Callable, Dict, List, Optional, Tuple
 
-from scripts.observer import KeyObserver, EventObserverMsg, CallbackObserver
 from game_essentails.events import key_broadcast_subject
-from setting_handler import setting_loader
+from pygame import Rect as PygameRect
+from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
+from pygame.display import get_surface
+from pygame.draw import rect as draw_rect
+from pygame.font import Font
+from pygame.surface import Surface
+from scripts.observer import CallbackObserver, EventObserverMsg, KeyObserver
+from setting_handler import get_common_setting
 
 
 @dataclass
 class ButtonText:
     "Text ontop the button"
     text: str = field(default = "")
-    font: Font = field(default = Font(
-        setting_loader.getSingleValueFrom("common", "ui_font"),
-        setting_loader.getSingleValueFrom("common", "ui_font_size")
-        )
-    )
+    font: Optional[Font] = field(default = None)
     antialias: bool = field(default = False)
-    color: str = field(default = setting_loader.getSingleValueFrom("common", "text_color"))
+    color: str = field(default = get_common_setting("text_color"))
     should_capitalize: bool = field(default = True)
+
+    def __post_init__(self) -> None:
+        if self.font is None:
+            self.font = Font(
+                get_common_setting("ui_font"),
+                get_common_setting("ui_font_size")
+            )
 
     def renderFont(self) -> Surface:
         text = self.text

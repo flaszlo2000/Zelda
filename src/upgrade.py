@@ -1,16 +1,23 @@
 import pygame
-from setting_handler import *
+
+from entities.player import Player
+from game_essentails.data.models.player import StatData
+from setting_handler import get_common_setting, setting_loader
+
 
 class Upgrade:
-    def __init__(self,player):
+    def __init__(self, player: Player):
 
         # general setup
         self.display_surface = pygame.display.get_surface()
         self.player = player
-        self.attribute_nr = len(player.stats)
-        self.attribute_names = list(player.stats.keys())
-        self.max_values = list(player.max_stats.values())
-        self.font = pygame.font.Font(UI_FONT, UI_FONT_SIZE)
+        self.attribute_nr = player.stats.stat_count
+        self.attribute_names = list(player.stats.__dict__.keys())
+        self.max_values = [stat.max for stat in player.stats.__dict__ if isinstance(stat, StatData)]
+        self.font = pygame.font.Font(
+            get_common_setting("ui_font"),
+            get_common_setting("ui_font_size")
+        )
 
         # item creation
         self.height = self.display_surface.get_size()[1] * 0.8

@@ -1,14 +1,14 @@
-import pygame 
-import setting_handler
-from data_loader import import_folder
-from entity import Entity
-
 from pathlib import Path
-from typing import Tuple, List, Any
+from typing import Any, List, Tuple
+
+import pygame
 from pygame.sprite import Group
 
-from scripts.image_provider import image_provider
+from data_loader import import_folder
+from entity import Entity
 from game_essentails.data.models.base import GameData
+from scripts.image_provider import image_provider
+from setting_handler import setting_loader
 
 
 class Player(Entity):
@@ -16,7 +16,8 @@ class Player(Entity):
         super().__init__(groups, is_player = True)
         self.image = image_provider.provideWithAlphaConvert(Path("./graphics/test/player.png"))
         self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(-6, setting_handler.HITBOX_OFFSET['player'])
+
+        self.hitbox = self.rect.inflate(-6, setting_loader.getSingleValueFrom("hitbox_offset", "player"))
 
         # NOTE: for this line, everything is implemented
 
@@ -36,7 +37,7 @@ class Player(Entity):
         self.weapon_index = 0
 
         # additional hotfix
-        self.weapon_data = Player.getNamesFromGameData(setting_handler.setting_loader["weapons"])
+        self.weapon_data = Player.getNamesFromGameData(setting_loader["weapons"])
 
         self.weapon = self.weapon_data[self.weapon_index]
         self.can_switch_weapon = True
@@ -48,7 +49,7 @@ class Player(Entity):
         self.magic_index = 0
 
         # additional hotfix as well
-        self.magic_data = Player.getNamesFromGameData(setting_handler.setting_loader["magic"])
+        self.magic_data = Player.getNamesFromGameData(setting_loader["magic"])
 
         self.magic = self.magic_data[self.magic_index]
         self.can_switch_magic = True

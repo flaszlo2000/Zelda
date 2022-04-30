@@ -8,7 +8,7 @@ class ObjectTile(AbstractBaseTile):
     __sprite_name__ = "object"
 
     def __post_init__(self):
-        tilesize = setting_loader.getSingleValueFrom("common", "tilesize")
+        tilesize = setting_loader.getSingleValueFrom("common", "tile_size")
         self.rect: Rect = self.image.get_rect(topleft = (self.position[0], self.position[1] - tilesize))
         super().setHitbox()
 

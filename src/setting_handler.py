@@ -1,8 +1,7 @@
 from enum import Enum
-from typing import Dict
 from pathlib import Path
+from typing import Any
 
-from player import Player
 from game_essentails.level_handling.resource_loader import SettingLoader
 
 
@@ -18,12 +17,11 @@ class TileIdEnum(Enum):
 
     PLAYER = 394
 
-ENTITY_DICT: Dict[str, object] = { # FIXME: type hint
-    "-1": None,
 
-    "394": Player
-}
 #endregion
+
+def get_common_setting(needed_setting_name: str) -> Any:
+    return setting_loader.getSingleValueFrom("common", needed_setting_name)
 
 if __name__ != "__main__":
     setting_loader = SettingLoader(Path("./settings"))
