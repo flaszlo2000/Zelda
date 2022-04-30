@@ -1,14 +1,16 @@
+from typing import Optional
+
+from player import Player
 from pygame.sprite import Group
 
-from . cameras import Renderer, YSortCameraRenderer
-from player import Player
+from .cameras import Renderer, YSortCameraRenderer
 
 
 class SpriteGroups:
     "Collect levels sprite groups with the camera as well"
-    def __init__(self, visible_sprites: Renderer = None):
+    def __init__(self, visible_sprites: Optional[Renderer] = None):
         if visible_sprites is None:
-            self._visible_sprites_by_camera = YSortCameraRenderer()
+            self._visible_sprites_by_camera: Renderer = YSortCameraRenderer()
         else:
             self._visible_sprites_by_camera = visible_sprites
 

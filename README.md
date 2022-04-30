@@ -1,6 +1,7 @@
 Extended Python Zelda clone
 
 Features:  
+[] mypy check
 [] save system  
 [] multiple levels  
 [] procedural generation  

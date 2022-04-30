@@ -1,9 +1,11 @@
-from typing import Tuple
 from pathlib import Path
+from typing import List, Tuple
 
-from . base_entity import LivingEntity
 from game_essentails.sprite_groups import SpriteGroups
+from pygame.sprite import Group
 from scripts.image_provider import image_provider
+
+from .base_entity import LivingEntity
 
 
 class Player(LivingEntity):
@@ -16,7 +18,7 @@ class Player(LivingEntity):
         self.changeInflateX(-6) # in the original code, this was used for some reason so I stay with it
         self.setPlayer(False) # FIXME: this is only for testing purposes
     
-    def getRelatedGroups(self, sprite_groups: SpriteGroups) -> list:
-        groups = [sprite_groups.visible_sprites]
+    def getRelatedGroups(self, sprite_groups: SpriteGroups) -> List[Group]:
+        groups: List[Group] = [sprite_groups.visible_sprites]
 
         return groups
