@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
-from . base import GameData
+from .base import GameData
 
 
 @dataclass
 class WeaponData(GameData):
     cooldown: int
     damage: int
-    graphics_src: Optional[str] = field(init = True)
+    graphics_src: str = field(init = True)

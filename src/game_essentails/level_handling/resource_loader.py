@@ -52,8 +52,13 @@ class SettingLoader:
 
 
 if __name__ == "__main__":
+    from pprint import pprint
+
     setting_loader = SettingLoader(Path("./settings"))
     setting_loader.importSettings()
 
     print(setting_loader.getSingleValueFrom("common", "ui_font"))
     print(setting_loader.getSingleValueFrom("hitbox_offset", "player"))
+
+    # for player_kind in cast(List[PlayerData], setting_loader["players"]):
+    pprint(setting_loader["players"])

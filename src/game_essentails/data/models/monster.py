@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from . base import GameData
+
+from .base import GameData
 
 
 @dataclass

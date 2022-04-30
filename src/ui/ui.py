@@ -1,38 +1,54 @@
+from dataclasses import dataclass, field
+from typing import Any, List
+
 import pygame
 import setting_handler as settings
-
-from . menu import Menu
+from entities.player import Player
+from game_essentails.data.models.base import GameData
+from pygame.surface import Surface
 from scripts.image_provider import image_provider
 from setting_handler import setting_loader
 
+from .menu import Menu
+
+
+def get_setting(setting_name: str, _of: str = "common") -> Any:
+    return setting_loader.getSingleValueFrom(_of, setting_name)
+
+@dataclass
 class UI:
-    def __init__(self):
+    display_surface: Surface = field(default_factory = pygame.display.get_surface)
+    menu: Menu = field(default_factory = Menu)
+
+    def __post_init__(self):
         # general 
-        self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(
-            setting_loader.getSingleValueFrom("common", "ui_font"),
-            setting_loader.getSingleValueFrom("common", "ui_font_size")
+            get_setting("ui_font"),
+            get_setting("ui_font_size")
         )
-        # bar setup 
-        self.health_bar_rect = pygame.Rect(10, 10, settings.HEALTH_BAR_WIDTH, settings.BAR_HEIGHT)
-        self.energy_bar_rect = pygame.Rect(10, 34, settings.ENERGY_BAR_WIDTH, settings.BAR_HEIGHT)
 
-        # convert weapon dictionary
-        self.weapon_graphics = []
-        for weapon in settings.setting_loader["weapons"]:
-            weapon_image = image_provider.provideWithAlphaConvert(weapon.graphics_src)
-            self.weapon_graphics.append(weapon_image)
+        # bar setup         
+        self.health_bar_rect = pygame.Rect(10, 10, get_setting("health_bar_width"), get_setting("bar_height"))
+        self.energy_bar_rect = pygame.Rect(10, 34, get_setting("energy_bar_width"), get_setting("bar_height"))
 
-        # convert magic dictionary
-        self.magic_graphics = []
-        for magic in settings.setting_loader["magic"]:
-            magic_image = image_provider.provideWithAlphaConvert(magic.graphics_src)
-            self.magic_graphics.append(magic_image)
+        # convert weapon and magic dictionary
+        self.weapon_graphics: List[Surface] = UI.getGraphicsListOf(setting_loader["weapons"])
+        self.magic_graphics: List[Surface] = UI.getGraphicsListOf(setting_loader["magic"])
 
-        # menu
-        self.menu = Menu()
+    @staticmethod
+    def getGraphicsListOf(data_list: List[GameData]) -> List[Surface]:
+        result_list: List[Surface] = list()
 
-    def show_bar(self,current,max_amount,bg_rect,color):
+        for data_object in data_list:
+            if data_object.graphics_src is None:
+                raise ValueError(f"{data_object} should have initialized graphics_src!")
+
+            converted_image = image_provider.provideWithAlphaConvert(data_object.graphics_src)
+            result_list.append(converted_image)
+
+        return result_list
+
+    def show_bar(self, current,max_amount,bg_rect,color):
         # draw bg 
         pygame.draw.rect(self.display_surface, settings.UI_BG_COLOR, bg_rect)
 
@@ -79,7 +95,7 @@ class UI:
 
         self.display_surface.blit(magic_surf,magic_rect)
 
-    def display(self,player):
+    def display(self, player: Player):
         self.show_bar(player.health,player.stats['health'],self.health_bar_rect, settings.HEALTH_COLOR)
         self.show_bar(player.energy,player.stats['energy'],self.energy_bar_rect, settings.ENERGY_COLOR)
 

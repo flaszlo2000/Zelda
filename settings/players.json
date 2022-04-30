@@ -1,0 +1,62 @@
+{
+    "base": {
+        "attack_cooldown": 400,
+        "switch_duration_cooldown": 200,
+
+        "health": {
+            "base": 100,
+            "max": 300,
+            "initial_upgrade_cost": 100
+        },
+        "energy": {
+            "base": 60,
+            "max": 140,
+            "initial_upgrade_cost": 100 
+        },
+        "attack": {
+            "base": 10,
+            "max": 20,
+            "initial_upgrade_cost": 100 
+        },
+        "magic": {
+            "base": 4,
+            "max": 10,
+            "initial_upgrade_cost": 100 
+        },
+        "speed": {
+            "base": 5,
+            "max": 10,
+            "initial_upgrade_cost": 100
+        }
+    },
+    "heavy": {
+        "attack_cooldown": 650,
+        "switch_duration_cooldown": 500,
+
+        "health": {
+            "base": 200,
+            "max": 500,
+            "initial_upgrade_cost": 100
+        },
+        "energy": {
+            "base": 100,
+            "max": 200,
+            "initial_upgrade_cost": 100 
+        },
+        "attack": {
+            "base": 20,
+            "max": 35,
+            "initial_upgrade_cost": 100 
+        },
+        "magic": {
+            "base": 0,
+            "max": 0,
+            "initial_upgrade_cost": 0 
+        },
+        "speed": {
+            "base": 2,
+            "max": 10,
+            "initial_upgrade_cost": 100
+        }
+    }
+}

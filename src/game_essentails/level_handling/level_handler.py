@@ -1,6 +1,7 @@
-import pygame
+from typing import Optional
 
 from level import Level
+
 from ..game_state import GameState
 
 
@@ -15,7 +16,7 @@ class LevelHandler:
         self._level.run()
         self._game_state.updateUi(self._level.getPlayer())
 
-    def changeLevel(self, new_level: Level) -> bool:
+    def changeLevel(self, new_level: Level) -> Optional[bool]:
         print("called")
         self._level.getPlayer().testOuter()
     
