@@ -1,17 +1,16 @@
-from pygame.sprite import Group
-from pygame.display import get_surface
-from pygame.math import Vector2
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from player import Player
+from pygame.display import get_surface
+from pygame.math import Vector2
+from pygame.rect import Rect
+from pygame.sprite import Group
 from scripts.image_provider import image_provider
-
 
 
 class Renderer(ABC, Group):
     @abstractmethod
-    def renderScreenWithPlayer(self, player: Player) -> None:...
+    def renderScreenWithPlayerPos(self, player_pos: Rect) -> None:...
 
 class YSortCameraRenderer(Renderer):
     def __init__(self):
@@ -26,10 +25,10 @@ class YSortCameraRenderer(Renderer):
         self.floor_surf = image_provider.provideWithConvert(Path("./graphics/tilemap/ground.png"))
         self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
-    def renderScreenWithPlayer(self, player: Player) -> None:
+    def renderScreenWithPlayerPos(self, player_pos: Rect) -> None:
         # getting the offset of the player
-        self.offset.x = player.rect.centerx - self.half_width
-        self.offset.y = player.rect.centery - self.half_height
+        self.offset.x = player_pos.centerx - self.half_width
+        self.offset.y = player_pos.centery - self.half_height
 
         # drawing the floor
         # TODO: draw background

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from player import Player
+from pygame.rect import Rect
 from pygame.sprite import Group
 
 from .cameras import Renderer, YSortCameraRenderer
@@ -33,5 +33,5 @@ class SpriteGroups:
     def attackable_sprites(self) -> Group:
         return self._attackable_sprites
 
-    def renderWithPlayer(self, player: Player) -> None:
-        self._visible_sprites_by_camera.renderScreenWithPlayer(player)
+    def renderWithPlayer(self, player_pos: Rect) -> None:
+        self._visible_sprites_by_camera.renderScreenWithPlayerPos(player_pos)

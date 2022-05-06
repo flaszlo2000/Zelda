@@ -13,7 +13,7 @@ class LevelHandler:
     def updateLevel(self) -> None:
         # NOTE: this is called from the main loop so basically you could add input or something similar
         # but consider to use EventObserver instead
-        self._level.run()
+        self._level.run() # this creates the map and the player with it
         self._game_state.updateUi(self._level.getPlayer())
 
     def changeLevel(self, new_level: Level) -> Optional[bool]:

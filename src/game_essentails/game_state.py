@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-from player import Player
 
+from entities.player import Player
 from ui.ui import UI
 
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from random import choice, randint
-from typing import List
+from typing import List, Optional
 
 import pygame
 from pygame.surface import Surface
@@ -57,7 +57,7 @@ class BaseLevel(ABC):
 
 
 class Level: 
-    def __init__(self, game_pauser: GamePauser, sprite_groups: SpriteGroups = None):
+    def __init__(self, game_pauser: GamePauser, sprite_groups: Optional[SpriteGroups] = None):
         self.display_surface = pygame.display.get_surface()
 
         if sprite_groups is None:
@@ -159,9 +159,9 @@ class Level:
                         #     self.trigger_death_particles,
                         #     self.add_exp)
         
-        #region TEST # TODO: remove this
-        test_new_player = Player(self.sprite_groups, (33, 21))
-        #endregion
+        # #region TEST # TODO: remove this
+        # test_new_player = Player(self.sprite_groups, (33, 21))
+        # #endregion
 
         return player
 
@@ -215,10 +215,10 @@ class Level:
         self.player.exp += amount
 
     def run(self):
-        self.sprite_groups.renderWithPlayer(self.player)
+        self.sprite_groups.renderWithPlayer(self.player.rect)
         
         if self.game_pauser.isPaused():
-            #self.upgrade.displayUpgradeMenu() # FIXME: do not depend on the game state, use visible attribut instead
+            #self.upgrade.displayUpgradeMenu() # FIXME: do not depend on the game state, use visible attribute instead
             pass
         else:
             # FIXME: LOD
