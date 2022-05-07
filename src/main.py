@@ -1,6 +1,6 @@
 import signal
 import sys
-from typing import Optional
+from typing import Any, Optional
 
 import pygame
 
@@ -27,7 +27,7 @@ class Game:
             self.level_handler = level_handler
 
         self._fetchBindings()
-        self._event_observer = CallbackObserver(lambda arg: self._quit()) # TODO: make this more flexible
+        self._event_observer = CallbackObserver[Any](lambda arg: self._quit()) # TODO: make this more flexible
         key_broadcast_subject.attach(self._event_observer, pygame.QUIT)
 
     def __pygameInit(self) -> None:

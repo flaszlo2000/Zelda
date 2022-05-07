@@ -1,15 +1,16 @@
 from pathlib import Path
-from typing import Any, List, Tuple
+from typing import List, Tuple
 
 import pygame
 from pygame.sprite import Group
 
-from data_loader import import_folder
 from entity import Entity
 from game_essentails.data.models.base import GameData
 from scripts.image_provider import image_provider
 from setting_handler import setting_loader
 
+#! not in use, only kept to check for features
+raise NotImplementedError()
 
 class Player(Entity):
     def __init__(self, pos: Tuple[int, int], groups: List[Group], obstacle_sprites):

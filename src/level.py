@@ -215,7 +215,7 @@ class Level:
         self.player.exp += amount
 
     def run(self):
-        self.sprite_groups.renderWithPlayer(self.player.rect)
+        self.sprite_groups.renderWithPlayerPos(self.player.rect)
         
         if self.game_pauser.isPaused():
             #self.upgrade.displayUpgradeMenu() # FIXME: do not depend on the game state, use visible attribute instead
@@ -223,8 +223,8 @@ class Level:
         else:
             # FIXME: LOD
             self.sprite_groups.visible_sprites.update()
-            self.sprite_groups.visible_sprites.enemy_update(self.player)
-            self.player_attack_logic()
+            # self.sprite_groups.visible_sprites.enemy_update(self.player)
+            # self.player_attack_logic()
     
     def getPlayer(self) -> Player:
         return self.player

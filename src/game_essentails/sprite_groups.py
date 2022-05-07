@@ -33,5 +33,5 @@ class SpriteGroups:
     def attackable_sprites(self) -> Group:
         return self._attackable_sprites
 
-    def renderWithPlayer(self, player_pos: Rect) -> None:
+    def renderWithPlayerPos(self, player_pos: Rect) -> None:
         self._visible_sprites_by_camera.renderScreenWithPlayerPos(player_pos)
