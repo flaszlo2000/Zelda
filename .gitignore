@@ -6,3 +6,4 @@ venv/
 
 beta/
 .mypy_cache
+*.db

@@ -4,6 +4,7 @@ from typing import Generator, Optional, Type, TypeVar
 
 from sqlalchemy.orm import Session, sessionmaker
 
+from db.check_tables import check_tables_on
 from db.handlers.base import DbHandler
 from db.models.base import DbModel
 from db.models.settings import Settings
@@ -17,6 +18,8 @@ class SaveSystemBase(ABC):
             self.db_handler = DbHandler(DB_URI)
         else:
             self.db_handler = db_handler
+
+        check_tables_on(self.db_handler.getEngine())
 
     @abstractmethod
     def saveValue(self, db_model: DbModel) -> bool:...
@@ -40,17 +43,16 @@ class SaveSystem(SaveSystemBase):
         session_maker = self.db_handler.getSessionmaker()
         with session_handler(session_maker) as session:
             has_the_vallue = session.query(db_model.__class__)
-            print(has_the_vallue)
+            print(has_the_vallue.all())
 
         return False
 
-
 class SaveSystemWrapper(SaveSystem):
-    def updateMusicOnStartup(self, state: bool) -> None:
+    def updateMusicOnStartUp(self, state: bool) -> None:
         self.saveValue(
             Settings(name="musicOnStartUp", value=str(state))
         )
 
 if __name__ == "__main__":
     test_save_sys = SaveSystemWrapper()
-    test_save_sys.updateMusicOnStartup(False)
+    test_save_sys.updateMusicOnStartUp(False)

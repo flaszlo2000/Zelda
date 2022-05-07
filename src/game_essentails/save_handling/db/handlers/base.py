@@ -10,10 +10,10 @@ class BaseDbHandler:...
 
 class DbHandler(BaseDbHandler):
     def __init__(self, connection_url: str):
-        self.engine = self.getEngine(connection_url)
+        self.engine = DbHandler.create_engine(connection_url)
 
     @staticmethod
-    def getEngine(connection_url: str) -> Engine:
+    def create_engine(connection_url: str) -> Engine:
         try:
             engine = create_engine(connection_url)
         except ModuleNotFoundError as exc:
@@ -27,3 +27,6 @@ class DbHandler(BaseDbHandler):
     @lru_cache
     def getSessionmaker(self) -> sessionmaker:
         return sessionmaker(bind=self.engine)
+
+    def getEngine(self) -> Engine:
+        return self.engine
