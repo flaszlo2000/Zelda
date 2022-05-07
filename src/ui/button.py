@@ -1,15 +1,15 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from game_essentails.events import key_broadcast_subject
-from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
+from pygame.constants import MOUSEBUTTONDOWN
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
 from pygame.rect import Rect
 from pygame.surface import Surface
-from scripts.observer import CallbackObserver, EventObserverMsg, KeyObserver
+from scripts.observer import CallbackObserver, EventObserverMsg
 from setting_handler import get_common_setting
 
 from ui.basic_ui_element import ClickableUiElement
@@ -57,7 +57,7 @@ class ButtonBase(Rect, ClickableUiElement):
         Rect.__init__(self, rect_pos)
         ClickableUiElement.__init__(self)
 
-        self._keybind: Optional[CallbackObserver] = None
+        self._keybind: Optional[CallbackObserver[Any]] = None
 
     @abstractmethod
     def getStateColor(self) -> str:...
@@ -104,7 +104,7 @@ class Button(ButtonBase):
 
         self._data.colors = new_colors
 
-    def setCommand(self, new_command: Callable) -> None:
+    def setCommand(self, new_command: Callable[..., None]) -> None:
         self._data.command = new_command
 
     def draw(self, display: Optional[Surface] = None) -> None:
@@ -121,8 +121,8 @@ class ButtonFactory:
     def __init__(self, parent_is_visible: Callable[[], bool]):
         self.__parent_is_visible = parent_is_visible
 
-    def create(self, button_data: ButtonData, *args, **kwargs) -> ButtonBase:
-        return Button(self.__parent_is_visible, button_data, *args, **kwargs)
+    def create(self, button_data: ButtonData) -> ButtonBase:
+        return Button(self.__parent_is_visible, button_data)
 
 class ButtonGroup:
     def __init__(self, button_data_list: List[ButtonData], button_factory: ButtonFactory):

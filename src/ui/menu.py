@@ -29,7 +29,7 @@ class Menu(BasicUiElement):
         self._button_group = ButtonGroup(button_data, button_factory)
         self.__setKeyBindings()
 
-        self.music_toggle = Toggle()
+        self.music_toggle = Toggle((1020, 590, 65, 35))
 
     def __setKeyBindings(self) -> None:
         exit_button = self._button_group.getButton("exit")
@@ -54,6 +54,7 @@ class Menu(BasicUiElement):
         surface.blit(text_surface, menu_body)
 
         self._button_group.draw()
+        self.music_toggle.draw()
 
 if __name__ == "__main__":
     test_menu = Menu()
