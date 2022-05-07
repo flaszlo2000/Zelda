@@ -27,6 +27,8 @@ class YSortCameraRenderer(Renderer):
 
     def renderScreenWithPlayerPos(self, player_pos: Rect) -> None:
         # getting the offset of the player
+
+        # FIXME: why is this so dependant on the player?
         self.offset.x = player_pos.centerx - self.half_width
         self.offset.y = player_pos.centery - self.half_height
 

@@ -140,7 +140,7 @@ class Level:
                         #! FIXME: at this point this coulb be only the Player
                         current_entity = ENTITY_DICT[col](
                             self.sprite_groups,
-                            (x * tile_size, y * tile_size),
+                            (x, y),
                         ) 
 
                         if current_entity.isPlayer():
