@@ -1,23 +1,25 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from game_essentails.events import key_broadcast_subject
-from pygame import Rect as PygameRect
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
+from pygame.rect import Rect
 from pygame.surface import Surface
 from scripts.observer import CallbackObserver, EventObserverMsg, KeyObserver
 from setting_handler import get_common_setting
+
+from ui.basic_ui_element import ClickableUiElement
 
 
 @dataclass
 class ButtonText:
     "Text ontop the button"
     text: str = field(default = "")
-    font: Optional[Font] = field(default = None)
+    font: Optional[Font] = field(default = None) 
     antialias: bool = field(default = False)
     color: str = field(default = get_common_setting("text_color"))
     should_capitalize: bool = field(default = True)
@@ -30,6 +32,8 @@ class ButtonText:
             )
 
     def renderFont(self) -> Surface:
+        if self.font is None: raise ValueError("Font should not be None at this point!")
+
         text = self.text
 
         if self.should_capitalize:
@@ -41,38 +45,29 @@ class ButtonText:
 class ButtonData:
     "Representation of a Button initial parameters"
     button_text: ButtonText
-    command: Callable
+    command: Callable[..., None]
     rect_pos: Tuple[int, int, int, int]
     colors: Tuple[str, str] = field(default= ("#ff0000", "#00ff00"))
 
     def getButtonTextStr(self) -> str:
         return self.button_text.text
 
-class ButtonBase(PygameRect, KeyObserver, ABC):
-    def __init__(self, rect_pos: Tuple[int, int, int, int], *args, **kwargs):
-        super().__init__(*rect_pos, *args, **kwargs)
+class ButtonBase(Rect, ClickableUiElement):
+    def __init__(self, rect_pos: Tuple[int, int, int, int]):
+        Rect.__init__(self, rect_pos)
+        ClickableUiElement.__init__(self)
 
-        self._clicked = False
         self._keybind: Optional[CallbackObserver] = None
-
-        self.__registerForKeys()
-
-    def __registerForKeys(self) -> None:
-        key_broadcast_subject.attach(self, MOUSEBUTTONDOWN)
-        key_broadcast_subject.attach(self, MOUSEBUTTONUP)
 
     @abstractmethod
     def getStateColor(self) -> str:...
 
     @abstractmethod
-    def draw(self) -> None:...
-
-    @abstractmethod
     def setKeybinding(self, event_to_react_with: int) -> None:...
 
 class Button(ButtonBase):
-    def __init__(self, parent_is_visible: Callable[[], bool], data: ButtonData, *args, **kwargs):
-        super().__init__(data.rect_pos, *args, **kwargs)
+    def __init__(self, parent_is_visible: Callable[[], bool], data: ButtonData):
+        super().__init__(data.rect_pos)
 
         self.__parent_is_visible = parent_is_visible
         self._data = data
@@ -112,7 +107,10 @@ class Button(ButtonBase):
     def setCommand(self, new_command: Callable) -> None:
         self._data.command = new_command
 
-    def draw(self, display: Surface) -> None:
+    def draw(self, display: Optional[Surface] = None) -> None:
+        if display is None:
+            display = get_surface()
+
         drawn_rect = draw_rect(display, self.getStateColor(), self)
         final_text = self._data.button_text.renderFont()
 

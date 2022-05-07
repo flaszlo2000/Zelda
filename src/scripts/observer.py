@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 
 from pygame.event import Event
 
@@ -28,47 +28,48 @@ class EventObserverMsg(ObserverMsg):
         return self._value
 #endregion
 
-class Observer(ABC):
+T = TypeVar("T", bound=ObserverMsg)
+class Observer(ABC, Generic[T]):
     @abstractmethod
-    def updateByNotification(self, msg: ObserverMsg) -> None:...
+    def updateByNotification(self, msg: T) -> None:...
 
-class CallbackObserver(Observer):
-    def __init__(self, callback: Callable[[ObserverMsg], Any]):
+class CallbackObserver(Observer[T]):
+    def __init__(self, callback: Callable[[T], Any]):
         self.__callback = callback
 
-    def updateByNotification(self, msg: ObserverMsg) -> None:
+    def updateByNotification(self, msg: T) -> None:
         self.__callback(msg)
 
-class KeyObserver(Observer):...
+class KeyObserver(Observer[T]):...
     # def updateByNotification(self, msg: ObserverMsg) -> None:
     #     print(f"I {self} have been updated with this msg: {msg}")
 
 class Subject(ABC):
-    def __init__(self, observers: Dict[int, List[Observer]] = dict()):
-        self._observers: Dict[int, List[Observer]] = observers
+    def __init__(self, observers: Dict[int, List[Observer[Any]]] = dict()):
+        self._observers: Dict[int, List[Observer[Any]]] = observers
 
     @abstractmethod
-    def attach(self, observer: Observer, event: int) -> None:...
+    def attach(self, observer: Observer[Any], event: int) -> None:...
 
     @abstractmethod
-    def detach(self, observer: Observer) -> None:...
+    def detach(self, observer: Observer[Any]) -> None:...
 
     @abstractmethod
-    def detachFrom(self, observer: Observer, event: int) -> None:...
+    def detachFrom(self, observer: Observer[Any], event: int) -> None:...
 
     @abstractmethod
     def notify(self, event: int, msg: Optional[ObserverMsg] = None) -> None:...
 
 class KeySubject(Subject):
-    def attach(self, observer: Observer, event: int) -> None:
+    def attach(self, observer: Observer[Any], event: int) -> None:
         self._observers[event] = [*self._observers.get(event, []), observer]
 
-    def detach(self, observer: Observer) -> None:
+    def detach(self, observer: Observer[Any]) -> None:
         for event, attached_observer_list in self._observers.items():
             if observer in attached_observer_list:
                 self._observers[event].remove(observer)
 
-    def detachFrom(self, observer: Observer, event: int):
+    def detachFrom(self, observer: Observer[Any], event: int):
         if event not in self._observers.keys():
             raise KeyError(f"{event} is not present between the keys of the events")
 

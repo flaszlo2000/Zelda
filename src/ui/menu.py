@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from game_essentails.events import key_broadcast_subject
 from pygame import Rect
@@ -6,17 +6,14 @@ from pygame.constants import QUIT, K_e
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.font import Font
-from setting_handler import get_common_setting, setting_loader
+from pygame.surface import Surface
+from setting_handler import get_common_setting
 
 from ui.button import ButtonData, ButtonFactory, ButtonGroup, ButtonText
 
+from .basic_ui_element import BasicUiElement
+from .toggle import Toggle
 
-class BasicUiElement: # TODO: move this to a separate file and use it as parent class everywhere
-    def __init__(self, visibility = False):
-        self.visible = visibility
-    
-    def isVisible(self) -> bool:
-        return self.visible
 
 class Menu(BasicUiElement):
     def __init__(self):
@@ -24,13 +21,15 @@ class Menu(BasicUiElement):
 
         button_factory = ButtonFactory(self.isVisible)
         button_data: List[ButtonData] = [
-            ButtonData(ButtonText("exit"), lambda: key_broadcast_subject.notify(QUIT), [150, 100, 50, 50]),
-            ButtonData(ButtonText("save"), lambda: print("save"), [250, 100, 50, 50]),
-            ButtonData(ButtonText("load"), lambda: print("load"), [350, 100, 50, 50]),
+            ButtonData(ButtonText("exit"), lambda: key_broadcast_subject.notify(QUIT), (150, 100, 50, 50)),
+            ButtonData(ButtonText("save"), lambda: print("save"), (250, 100, 50, 50)),
+            ButtonData(ButtonText("load"), lambda: print("load"), (350, 100, 50, 50)),
         ]
 
         self._button_group = ButtonGroup(button_data, button_factory)
         self.__setKeyBindings()
+
+        self.music_toggle = Toggle()
 
     def __setKeyBindings(self) -> None:
         exit_button = self._button_group.getButton("exit")
@@ -39,10 +38,14 @@ class Menu(BasicUiElement):
     def toggle(self) -> None:
         self.visible = not self.visible
 
-    def draw(self) -> None:
+    def draw(self, _surface: Optional[Surface] = None) -> None:
         if not self.visible: return
 
-        surface = get_surface()
+        if _surface is None:
+            surface = get_surface()
+        else:
+            surface = _surface
+
         screen_size = surface.get_size()
 
         self.font = Font(get_common_setting("ui_font"), get_common_setting("ui_font_size"))
