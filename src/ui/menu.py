@@ -30,6 +30,7 @@ class Menu(BasicUiElement):
         self.__setKeyBindings()
 
         self.music_toggle = Toggle((1020, 590, 65, 35))
+        self.music_toggle.addCommand(lambda: print("hello sw"))
 
     def __setKeyBindings(self) -> None:
         exit_button = self._button_group.getButton("exit")

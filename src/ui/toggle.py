@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
-from typing import Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 from pygame.color import Color
+from pygame.constants import MOUSEBUTTONUP
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.rect import Rect
@@ -15,6 +16,10 @@ from .basic_ui_element import ClickableUiElement
 class ToggleState:
     on: bool = field(default = False)
     colors: Tuple[Color, Color] = field(default = (Color("#00ff00"), Color("#ff0000"))) # on, off
+    
+    # NOTE: appendal of a command is only allowed after init  
+    command: Optional[Callable[..., None]] = field(default = None, init = False)
+
 
 class Toggle(ClickableUiElement, Rect):
     def __init__(
@@ -43,4 +48,12 @@ class Toggle(ClickableUiElement, Rect):
         draw_rect(surface, self.__getColor(), self)
 
     def updateByNotification(self, msg: EventObserverMsg) -> None:
-        raise NotImplementedError()
+        if msg.value.type != MOUSEBUTTONUP: return
+
+        if self.state.command is not None:
+            self.state.command()
+        else:
+            print("[*] WARNING: command is uninitalized!")
+
+    def addCommand(self, command: Callable[..., None]) -> None:
+        self.state.command = command
