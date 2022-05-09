@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from game_essentails.events import SAVE, key_broadcast_subject
+from game_essentails.events import (MAIN_SOUND_TOGGLE, SAVE,
+                                    key_broadcast_subject)
 from game_essentails.save_handling.constants import MUSIC_ON_STARTUP
 from game_essentails.save_handling.data_request import data_request
 from pygame import Rect
@@ -69,6 +70,7 @@ class Menu(BasicUiElement):
 
     def changeStateOfMusicStartup(self) -> None:
         key_broadcast_subject.notify(SAVE, KeyValueObserverMsg(MUSIC_ON_STARTUP, self.music_toggle.state))
+        key_broadcast_subject.notify(MAIN_SOUND_TOGGLE)
 
     def __getInitialStateOfMusicStartup(self) -> bool:
         return data_request(MUSIC_ON_STARTUP) == "True"

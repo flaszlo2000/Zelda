@@ -7,9 +7,12 @@ import pygame
 from game_essentails.events import key_broadcast_subject
 from game_essentails.game_state import GameState
 from game_essentails.level_handling.level_handler import LevelHandler
+from game_essentails.save_handling.constants import MUSIC_ON_STARTUP
+from game_essentails.save_handling.data_request import data_request
 from level import Level
 from scripts.observer import CallbackObserver, EventObserverMsg
 from setting_handler import get_common_setting
+from sound import SoundHandler
 from ui.ui import UI
 
 
@@ -27,8 +30,13 @@ class Game:
             self.level_handler = level_handler
 
         self._fetchBindings()
-        self._event_observer = CallbackObserver[Any](lambda arg: self._quit()) # TODO: make this more flexible
-        key_broadcast_subject.attach(self._event_observer, pygame.QUIT)
+        
+        self._quit_observer = CallbackObserver[Any](lambda arg: self._quit()) # TODO: make this more flexible
+        key_broadcast_subject.attach(self._quit_observer, pygame.QUIT)
+
+        # post init db related stuff
+        music_on_startup = data_request(MUSIC_ON_STARTUP) == "True"
+        self.sound_handler.setMainSoundState(music_on_startup)
 
     def __pygameInit(self) -> None:
         pygame.init()
@@ -37,9 +45,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # sound 
-        main_sound = pygame.mixer.Sound('./audio/main.ogg')
-        main_sound.set_volume(0.5)
-        main_sound.play(loops = -1)
+        self.sound_handler = SoundHandler()
 
     def _fetchBindings(self) -> None:
         # TODO: read this from file
