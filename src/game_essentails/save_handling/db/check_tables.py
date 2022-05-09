@@ -25,4 +25,4 @@ def check_tables_on(engine: Engine) -> None:
             table.create(bind = engine)
     else:
         if tables_were_ok:
-            print("Tables has been checked!")
+            print("[*] NOTE: Save structure has been checked!")

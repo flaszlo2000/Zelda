@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from game_essentails.save_handling.save import SaveSystemAdapter
+from game_essentails.save_handling.main import SaveSystemAdapter
 from level import Level
 
 from ..game_state import GameState

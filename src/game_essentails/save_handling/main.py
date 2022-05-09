@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
+from copy import copy
 from typing import Dict, Generator, Optional, TypeVar
 
 from game_essentails.save_handling.db.check_tables import check_tables_on
@@ -43,7 +44,6 @@ def session_handler(session_maker: sessionmaker, engine: Engine) -> Generator[Se
     new_session: Session = session_maker(autocommit = False, autoflush = False, bind = engine)
     yield new_session
     new_session.expunge_all() # make query results useable outside the contextmanager
-    new_session.commit()
     new_session.close()
 
 class SaveSystem(SaveSystemBase):
@@ -64,6 +64,8 @@ class SaveSystem(SaveSystemBase):
                 value_query.update( # type: ignore # sqlalchemy
                     SaveSystem.filter_dict(db_model.__dict__) # sqlalchemy issue with _sa_instance_state
                 )
+
+            session.commit()
 
         return db_model # because of the method is generic, we had to return something in the same type
 
