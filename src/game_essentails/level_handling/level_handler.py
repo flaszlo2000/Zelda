@@ -4,7 +4,6 @@ from typing import Optional
 from game_essentails.events import LOAD_GAME, SAVE_GAME, key_broadcast_subject
 from game_essentails.save_handling.main import SaveSystemAdapter
 from level import Level
-from pygame.rect import Rect
 from scripts.observer import CallbackObserver, StrObserverMsg
 
 from ..game_state import GameState
@@ -40,7 +39,7 @@ class LevelHandler:
     def saveGame(self, msg: StrObserverMsg) -> None:
         #! FIXME: save the whole game, not just the position of the player
         player = self._level.getPlayer()
-        player_pos = (player.rect.left, player.rect.top, player.rect.width, player.rect.height)
+        player_pos = "{}, {}".format(player.rect.left, player.rect.top) # as string, it is more flexible with the db
 
         self.save_handler.savePlayerPosition(player_pos)
         print("[*] NOTE: position saved!")
@@ -54,7 +53,6 @@ class LevelHandler:
         
         player = self._level.getPlayer()
         
-        # dumpsterfire parse
-        saved_pos= tuple(map(int, saved_position.replace('(', '').replace(')', '').split(", ")))
-        player.moveTo(saved_pos[0], saved_pos[1])
+        saved_pos= tuple(map(int, saved_position.split(", ")))
+        player.moveTo(*saved_pos)
         print("[*] NOTE: position loaded!")

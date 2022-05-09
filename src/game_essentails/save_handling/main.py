@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from typing import Any, Dict, Generator, Optional, Tuple, TypeVar
+from typing import Any, Dict, Generator, Optional, TypeVar
 
 from game_essentails.save_handling.db.check_tables import check_tables_on
 from game_essentails.save_handling.db.handlers.base import DbHandler
@@ -110,9 +110,9 @@ class SaveSystemAdapter(SaveSystem):
             Setting(name = MUSIC_VOLUME, value = str(new_volume))
         )
 
-    def savePlayerPosition(self, position: Tuple[int, int, int, int]) -> None:
+    def savePlayerPosition(self, position: str) -> None:
         self.saveValue(
-            Setting(name = MAIN_PLAYER_POSITION, value = str(position))
+            Setting(name = MAIN_PLAYER_POSITION, value = position)
         )
 
     def getPlayerPosition(self) -> Optional[str]:

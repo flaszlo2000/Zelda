@@ -15,7 +15,7 @@ class AbstractBaseTile(Sprite, ABC):
         super().__init__(self.getRelatedGroups(sprite_groups)) # type: ignore # pygame error
 
         tile_size = setting_loader.getSingleValueFrom("common", "tile_size")
-        self.position = [position * tile_size for position in _position]
+        self.position = [position * tile_size for position in _position] # FIXME: is this used?
 
         # Fix mypy dataclass and abc issue
         self.image: Surface = image_surface
