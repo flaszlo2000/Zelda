@@ -1,8 +1,10 @@
 from pathlib import Path
-from typing import List, Optional, Tuple, cast
+from typing import Any, List, Optional, Tuple, cast
 
 from game_essentails.data.models.player import PlayerData
 from game_essentails.sprite_groups import SpriteGroups
+from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP
+from pygame.key import get_pressed
 from pygame.sprite import Group
 from scripts.image_provider import image_provider
 from setting_handler import setting_loader
@@ -42,3 +44,31 @@ class Player(LivingEntity):
     def testOuter(self) -> None:
         #! FIXME: remove this, this is only a placeholder to test
         self._exp += 20
+
+    def input(self) -> None:
+        #  if not self.attacking:
+        keys = get_pressed()
+
+        # movement input
+        if keys[K_UP]:
+            self.direction.y = -1
+            # self.status = 'up'
+        elif keys[K_DOWN]:
+            self.direction.y = 1
+            # self.status = 'down'
+        else:
+            self.direction.y = 0
+
+        if keys[K_RIGHT]:
+            self.direction.x = 1
+            # self.status = 'right'
+        elif keys[K_LEFT]:
+            self.direction.x = -1
+            # self.status = 'left'
+        else:
+            self.direction.x = 0
+
+    def update(self, *args: List[Any]) -> None:
+        # NOTE: called by pygame as a default behaviour because all Sprite has this method
+        self.input()
+        self.move(self._stats.speed.base)
