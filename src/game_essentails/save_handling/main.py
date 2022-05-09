@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from typing import Dict, Generator, Optional, TypeVar
+from typing import Any, Dict, Generator, Optional, Tuple, TypeVar
 
 from game_essentails.save_handling.db.check_tables import check_tables_on
 from game_essentails.save_handling.db.handlers.base import DbHandler
@@ -10,7 +10,7 @@ from game_essentails.save_handling.db_request_handler import DbRequestHandler
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Query, Session, sessionmaker
 
-from .constants import MUSIC_ON_STARTUP, MUSIC_VOLUME
+from .constants import MAIN_PLAYER_POSITION, MUSIC_ON_STARTUP, MUSIC_VOLUME
 
 DB_URI = "sqlite:///dist/saves/save.db" #! FIXME
 
@@ -82,6 +82,14 @@ class SaveSystemAdapter(SaveSystem):
         super().__init__(db_handler)
         self.request_handler = DbRequestHandler(self)
 
+    @staticmethod
+    def retrive_value(raw_value: DbModel) -> Any:
+        result = None
+        if raw_value is not None:
+            result = getattr(raw_value, "value")
+
+        return result
+
     def updateMusicOnStartUp(self, state: bool) -> None:
         self.saveValue(
             Setting(name = MUSIC_ON_STARTUP, value=str(state))
@@ -90,11 +98,10 @@ class SaveSystemAdapter(SaveSystem):
     def getMusicOnStartUpState(self) -> bool:
         result: bool = False
         db_result = self.getValue(
-            Setting(name = MUSIC_ON_STARTUP, value = str(True)) #! FIXME: remove fix value
+            Setting(name = MUSIC_ON_STARTUP)
         )
 
-        if db_result is not None:
-            result = getattr(db_result, "value")
+        result = self.retrive_value(db_result)
 
         return result
     
@@ -102,6 +109,21 @@ class SaveSystemAdapter(SaveSystem):
         self.saveValue(
             Setting(name = MUSIC_VOLUME, value = str(new_volume))
         )
+
+    def savePlayerPosition(self, position: Tuple[int, int, int, int]) -> None:
+        self.saveValue(
+            Setting(name = MAIN_PLAYER_POSITION, value = str(position))
+        )
+
+    def getPlayerPosition(self) -> Optional[str]:
+        result: Optional[str] = None
+        db_result = self.getValue(
+            Setting(name = MAIN_PLAYER_POSITION)
+        )
+
+        result = self.retrive_value(db_result)
+
+        return result
 
 if __name__ == "__main__":
     test_save_sys = SaveSystemAdapter()

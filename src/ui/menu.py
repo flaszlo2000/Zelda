@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from game_essentails.events import (MAIN_SOUND_TOGGLE, SAVE,
-                                    key_broadcast_subject)
+from game_essentails.events import (LOAD_GAME, MAIN_SOUND_TOGGLE, SAVE,
+                                    SAVE_GAME, key_broadcast_subject)
 from game_essentails.save_handling.constants import MUSIC_ON_STARTUP
 from game_essentails.save_handling.data_request import data_request
 from pygame import Rect
@@ -25,8 +25,8 @@ class Menu(BasicUiElement):
         button_factory = ButtonFactory(self.isVisible)
         button_data: List[ButtonData] = [
             ButtonData(ButtonText("exit"), lambda: key_broadcast_subject.notify(QUIT), (150, 100, 50, 50)),
-            ButtonData(ButtonText("save"), lambda: print("save"), (250, 100, 50, 50)),
-            ButtonData(ButtonText("load"), lambda: print("load"), (350, 100, 50, 50)),
+            ButtonData(ButtonText("save"), lambda: key_broadcast_subject.notify(SAVE_GAME), (250, 100, 50, 50)),
+            ButtonData(ButtonText("load"), lambda: key_broadcast_subject.notify(LOAD_GAME), (350, 100, 50, 50)),
         ]
 
         self._button_group = ButtonGroup(button_data, button_factory)

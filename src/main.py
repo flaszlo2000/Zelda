@@ -31,6 +31,7 @@ class Game:
 
         self._fetchBindings()
         
+        # event listeners
         self._quit_observer = CallbackObserver[Any](lambda arg: self._quit()) # TODO: make this more flexible
         key_broadcast_subject.attach(self._quit_observer, pygame.QUIT)
 

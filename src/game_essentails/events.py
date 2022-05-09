@@ -6,5 +6,8 @@ SAVE: int = 10_001
 LOAD: int = 10_002
 LOAD_REQ: int = 10_003 # request to send out a specific saved value
 MAIN_SOUND_TOGGLE: int = 10_004
+SAVE_GAME: int = 10_005
+LOAD_GAME: int = 10_006
+
 
 key_broadcast_subject = KeySubject()

@@ -50,3 +50,11 @@ class AbstractBaseTile(Sprite, ABC):
     def changeInflateX(self, new_x_offset: int = 0) -> None:
         # This method is needed because some child class might have different x offsets
         self.setHitbox(new_x_offset)
+
+    def moveTo(self, x: int, y: int):
+        if self.rect is None: raise ValueError(f"Unsuccessful move, rect is None at {self}")
+
+        self.rect.left = x
+        self.rect.top = y
+        self.position = [x, y]
+        self.setHitbox()

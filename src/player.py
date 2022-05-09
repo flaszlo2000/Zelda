@@ -243,7 +243,7 @@ class Player(Entity):
         self.cooldowns()
         self.get_status()
         self.animate()
-        self.move(self.stats['speed'])
+        # self.move(self.stats['speed']) # DONE
         self.energy_recovery()
 
     def testOuter(self):
