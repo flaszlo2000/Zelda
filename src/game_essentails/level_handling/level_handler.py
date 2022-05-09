@@ -52,7 +52,7 @@ class LevelHandler:
             return
         
         player = self._level.getPlayer()
-        
         saved_pos= tuple(map(int, saved_position.split(", ")))
+
         player.moveTo(*saved_pos)
         print("[*] NOTE: position loaded!")

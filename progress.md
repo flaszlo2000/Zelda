@@ -2,25 +2,13 @@
 graphics_src is needed in the players.json
 
 ### usual)
-- clean code and weekly refactors
+- clean code, mypy
 
 ### p1) (doing)
-- refactor player.py and create abstractions for entities:
-    - [x] entities/player.py can be drawn with NormalTile
-    - [] use new entities/player.py for the character
-- because player.py has confusing statloading, get together the settings.py
-    - [x] mvc models for settings
-    - [x] game_essentails/data/loaders/data_loader.py to be able to load different kind of files as well
-    - [x] game_essentails/level_handling/resource_loader.py to load datas dynamically 
-    - [] setup every setting file into settings folder
-
-- make sound disabled 
+- player reconstruct (and throw out old player.py)
 
 ### p2)
 - trial ee listener
-- reconstruct folder and file structure:
-    - [x] level_handler folder:
-        - [] data_loader into this folder, with image_provider
 - enemies
 
 
@@ -33,6 +21,8 @@ graphics_src is needed in the players.json
         - [x] exit
         - [] save
         - [] load
+- full game save
+
 ### p4)
 - sound
 - additional ais
@@ -51,7 +41,7 @@ graphics_src is needed in the players.json
     - load layers and enable to edit them one by one
     - be able to create/load/save different maps
 
-3. save and load system
+3. save and load system (atm we have the basis of this)
 4. achievments
 5. multiplayer:
     - local (hotseat/lan ?)  
@@ -69,3 +59,18 @@ graphics_src is needed in the players.json
 life is good
 
 ## DONE
+- refactor player.py and create abstractions for entities:
+    - [x] entities/player.py can be drawn with NormalTile
+    - [x] use new entities/player.py for the character
+- because player.py has confusing statloading, get together the settings.py
+    - [x] mvc models for settings
+    - [x] game_essentails/data/loaders/data_loader.py to be able to load different kind of files as well
+    - [x] game_essentails/level_handling/resource_loader.py to load datas dynamically 
+    - [x] setup every setting file into settings folder
+
+- make sound disabled (saved in db)
+- player pos can be saved and loaded
+
+- reconstruct folder and file structure:
+    - [x] level_handler folder:
+        - [x] data_loader into this folder, with image_provider
