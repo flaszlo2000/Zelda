@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from game_essentails.events import key_broadcast_subject
+from pygame.color import Color
 from pygame.constants import MOUSEBUTTONDOWN
 from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
@@ -47,33 +48,28 @@ class ButtonData:
     button_text: ButtonText
     command: Callable[..., None]
     rect_pos: Tuple[int, int, int, int]
-    colors: Tuple[str, str] = field(default= ("#ff0000", "#00ff00"))
+    colors: Tuple[Color, Color] = field(default= (Color("#ff0000"), Color("#00ff00")))
 
     def getButtonTextStr(self) -> str:
         return self.button_text.text
 
 class ButtonBase(Rect, ClickableUiElement):
-    def __init__(self, rect_pos: Tuple[int, int, int, int]):
+    def __init__(self, rect_pos: Tuple[int, int, int, int], parent_is_visible: Callable[..., Any]):
         Rect.__init__(self, rect_pos)
-        ClickableUiElement.__init__(self)
+        ClickableUiElement.__init__(self, parent_is_visible=parent_is_visible)
 
         self._keybind: Optional[CallbackObserver[Any]] = None
-
-    @abstractmethod
-    def getStateColor(self) -> str:...
 
     @abstractmethod
     def setKeybinding(self, event_to_react_with: int) -> None:...
 
 class Button(ButtonBase):
     def __init__(self, parent_is_visible: Callable[[], bool], data: ButtonData):
-        super().__init__(data.rect_pos)
-
-        self.__parent_is_visible = parent_is_visible
+        super().__init__(data.rect_pos, parent_is_visible)
         self._data = data
 
     def updateByNotification(self, msg: EventObserverMsg) -> None:
-        if self.__parent_is_visible():
+        if self.parentIsVisible():
             if msg.value.type == MOUSEBUTTONDOWN:
                 if self.collidepoint(msg.value.pos):
                     self._clicked = True
@@ -85,7 +81,7 @@ class Button(ButtonBase):
                     self._clicked = False
 
     def __keyBindingNotification(self) -> None:
-        if self.__parent_is_visible():
+        if self.parentIsVisible():
             self._data.command()
 
     def setKeybinding(self, event_to_react_with: int) -> None:
@@ -96,10 +92,10 @@ class Button(ButtonBase):
         self._keybind = CallbackObserver(lambda msg: self.__keyBindingNotification())
         key_broadcast_subject.attach(self._keybind, event_to_react_with)
 
-    def getStateColor(self) -> str:
+    def getStateColor(self) -> Color:
         return self._data.colors[self._clicked]
 
-    def setColors(self, new_colors: Tuple[str, str]) -> None:
+    def setColors(self, new_colors: Tuple[Color, Color]) -> None:
         if len(new_colors) != 2: raise ValueError("Incorrect parameter, the new_colors tuple must contain two elements!")
 
         self._data.colors = new_colors

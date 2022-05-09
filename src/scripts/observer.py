@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, TypeVar
 
 from pygame.event import Event
 
@@ -26,6 +26,15 @@ class EventObserverMsg(ObserverMsg):
     @property
     def value(self) -> Event:
         return self._value
+
+@dataclass
+class KeyValueObserverMsg(ObserverMsg):
+    key: Any
+    data: Any
+
+    @property
+    def value(self) -> Tuple[Any, Any]:
+        return (self.key, self.data)
 #endregion
 
 T = TypeVar("T", bound=ObserverMsg)

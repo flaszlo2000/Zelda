@@ -5,8 +5,7 @@ from .base import Base, DbModel
 
 
 @RegisterMixin.register
-class Settings(DbModel, Base):
+class Setting(DbModel, Base):
     __tablename__ = "settings"
 
-    name = Column(Text, unique=True)
     value = Column(Text)
