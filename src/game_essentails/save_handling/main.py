@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from copy import copy
 from typing import Dict, Generator, Optional, TypeVar
 
 from game_essentails.save_handling.db.check_tables import check_tables_on
