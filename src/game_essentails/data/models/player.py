@@ -30,6 +30,10 @@ class StatData:
         self.frame_c += 1
         if self.frame_c >= (60 * self.regen_rate_in_sec): #! FIXME: magic number! should be game fps!
             self.base += (self.max * self.regen_amount_percentage)
+
+            if self.base > self.max:
+                self.base = self.max
+    
             self.frame_c = 0
 
     def updateRegenAmount(self, dependent_stat: "StatData") -> None:
