@@ -9,11 +9,13 @@
             "initial_upgrade_cost": 100
         },
         "energy": {
-            "base": 60,
+            "base": 48,
             "max": 140,
             "initial_upgrade_cost": 100,
             "can_be_regened": true,
-            "depends_on": "magic"
+            "depends_on": "magic",
+            "regen_rate_in_sec": 1,
+            "regen_amount_percentage": 0.05 
         },  
         "attack": {
             "base": 10,
@@ -38,15 +40,12 @@
         "health": {
             "base": 200,
             "max": 500,
-            "initial_upgrade_cost": 100,
-            "can_be_regened": true,
-            "depends_on": "attack"
+            "initial_upgrade_cost": 100
         },
         "energy": {
             "base": 100,
             "max": 200,
-            "initial_upgrade_cost": 100,
-            "can_be_regened": true
+            "initial_upgrade_cost": 100
         },
         "attack": {
             "base": 20,

@@ -6,12 +6,12 @@ from .base import GameData
 
 @dataclass
 class StatData:
-    base: int
+    base: float
     max: int
     initial_upgrade_cost: int
 
     can_be_regened: bool = field(default = False)
-    regen_rate_in_sec: float = field(default = 1)
+    regen_rate_in_sec: float = field(default = .5)
     regen_amount_percentage: float = field(default = .01)
     regen_max_percentage: float = field(default=100) # determines how much a stat can be regen automatically
     depends_on: Optional[str] = field(default = None) # specify an other stat which will alter the regen amount
@@ -29,8 +29,7 @@ class StatData:
 
         self.frame_c += 1
         if self.frame_c >= (60 * self.regen_rate_in_sec): #! FIXME: magic number! should be game fps!
-            print("now")
-            self.base += round(self.base * self.regen_amount_percentage)
+            self.base += (self.max * self.regen_amount_percentage)
             self.frame_c = 0
 
     def updateRegenAmount(self, dependent_stat: "StatData") -> None:
@@ -38,7 +37,9 @@ class StatData:
         # fpr instance self.regen_amount_percentage is dependent on the player's magic stat,
         # here i can filter it dynamically 
         if self.depends_on is None: raise AttributeError("There is no outer dependency on this stat, so it does not require an update-amount!")
+        print(self.regen_rate_in_sec, self.regen_amount_percentage)
         self.regen_amount_percentage *= dependent_stat.base
+
 
 @dataclass
 class PlayerData(GameData):

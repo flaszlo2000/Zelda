@@ -43,7 +43,7 @@ class LivingEntity(BaseEntity):
         #endregion
         self.direction = Vector2()
 
-    def move(self, speed: int):
+    def move(self, speed: float):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
 
