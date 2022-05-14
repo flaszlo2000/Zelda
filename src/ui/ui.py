@@ -96,8 +96,12 @@ class UI:
         self.display_surface.blit(magic_surf,magic_rect)
 
     def display(self, player: Player):
-        self.show_bar(player.stats.health.base, player.stats.health.max, self.health_bar_rect, get_common_setting("health_color"))
-        self.show_bar(player.stats.energy.base, player.stats.health.max, self.energy_bar_rect, get_common_setting("energy_color"))
+        player_health = player.getStat("health")
+        player_energy = player.getStat("energy")
+
+        self.show_bar(player_health.base, player_health.max, self.health_bar_rect, get_common_setting("health_color"))
+        self.show_bar(player_energy.base, player_energy.max, self.energy_bar_rect, get_common_setting("energy_color"))
+
 
         self.show_exp(player.exp)
 

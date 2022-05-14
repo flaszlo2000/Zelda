@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import List, Optional
 
 from .base import GameData
 
@@ -27,6 +27,9 @@ class PlayerData(GameData):
 
     __stat_count: int = field(default = 0)
 
+    # list to make easier real stat existance checking
+    __stat_key_list: List[str] = field(default_factory = list, init = False)
+
     def __post_init__(self) -> None:
         # NOTE: at the data loading stage StatData is parsed as dict so I have to convert it
         for param, value in self.__dict__.items():
@@ -42,7 +45,19 @@ class PlayerData(GameData):
                 if isinstance(value, dict) and subclass_check:
                     self.__stat_count += 1
                     self.__dict__[param] = StatData(**value) # type: ignore
+                    self.__stat_key_list.append(param)
 
     @property
     def stat_count(self) -> int:
         return self.__stat_count
+
+    def getStat(self, stat_name: str) -> StatData:
+        "Search for only StatData and returns it"
+        if stat_name not in self.__stat_key_list:
+            error_msg = f"The given *{stat_name}* stat was not found!"
+            if stat_name in self.__dict__:
+                error_msg = f"The given *{stat_name}* stat was found, but it is not real StatData!"
+
+            raise AttributeError(error_msg)
+        
+        return self.__dict__[stat_name]

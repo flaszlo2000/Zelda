@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, List, Optional, Tuple, cast
 
-from game_essentails.data.models.player import PlayerData
+from game_essentails.data.models.player import PlayerData, StatData
 from game_essentails.sprite_groups import SpriteGroups
 from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP
 from pygame.key import get_pressed
@@ -68,7 +68,16 @@ class Player(LivingEntity):
         else:
             self.direction.x = 0
 
+    def regenStats(self) -> None:
+        "Regenerate those stats which can be regened"
+        pass
+
     def update(self, *args: List[Any]) -> None:
         # NOTE: called by pygame as a default behaviour because all Sprite has this method
         self.input()
         self.move(self._stats.speed.base)
+        self.regenStats()
+
+    def getStat(self, stat: str) -> StatData:
+        "Returns a stat of the player"
+        return self._stats.getStat(stat)
