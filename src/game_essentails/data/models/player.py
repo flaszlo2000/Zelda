@@ -37,9 +37,7 @@ class StatData:
         # fpr instance self.regen_amount_percentage is dependent on the player's magic stat,
         # here i can filter it dynamically 
         if self.depends_on is None: raise AttributeError("There is no outer dependency on this stat, so it does not require an update-amount!")
-        print(self.regen_rate_in_sec, self.regen_amount_percentage)
         self.regen_amount_percentage *= dependent_stat.base
-
 
 @dataclass
 class PlayerData(GameData):

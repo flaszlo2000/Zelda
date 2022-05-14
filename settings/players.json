@@ -12,10 +12,11 @@
             "base": 48,
             "max": 140,
             "initial_upgrade_cost": 100,
+
             "can_be_regened": true,
             "depends_on": "magic",
-            "regen_rate_in_sec": 1,
-            "regen_amount_percentage": 0.05 
+            "regen_rate_in_sec": 0,
+            "regen_amount_percentage": 0.0005
         },  
         "attack": {
             "base": 10,
