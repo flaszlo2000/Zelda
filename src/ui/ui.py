@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import List
 
 import setting_handler as settings
 from entities.player import Player
@@ -48,7 +48,7 @@ class UI:
 
         return result_list
 
-    def show_bar(self, current_value: int, max_value: int, bg_rect: Rect, color_str: str):
+    def show_bar(self, current_value: float, max_value: int, bg_rect: Rect, color_str: str):
         # draw bg 
         draw.rect(self.display_surface, get_common_setting("ui_bg_color"), bg_rect)
 
@@ -56,7 +56,7 @@ class UI:
         ratio = current_value / max_value
         current_width = bg_rect.width * ratio
         current_rect = bg_rect.copy()
-        current_rect.width = current_width
+        current_rect.width = int(current_width)
 
         # drawing the bar
         draw.rect(self.display_surface, color_str, current_rect)
