@@ -70,7 +70,8 @@ class Player(LivingEntity):
 
     def regenStats(self) -> None:
         "Regenerate those stats which can be regened"
-        pass
+        for stat in self._stats.getRegenerableStats():
+            stat.regen()
 
     def update(self, *args: List[Any]) -> None:
         # NOTE: called by pygame as a default behaviour because all Sprite has this method

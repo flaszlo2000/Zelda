@@ -11,8 +11,10 @@
         "energy": {
             "base": 60,
             "max": 140,
-            "initial_upgrade_cost": 100 
-        },
+            "initial_upgrade_cost": 100,
+            "can_be_regened": true,
+            "depends_on": "magic"
+        },  
         "attack": {
             "base": 10,
             "max": 20,
@@ -36,12 +38,15 @@
         "health": {
             "base": 200,
             "max": 500,
-            "initial_upgrade_cost": 100
+            "initial_upgrade_cost": 100,
+            "can_be_regened": true,
+            "depends_on": "attack"
         },
         "energy": {
             "base": 100,
             "max": 200,
-            "initial_upgrade_cost": 100 
+            "initial_upgrade_cost": 100,
+            "can_be_regened": true
         },
         "attack": {
             "base": 20,

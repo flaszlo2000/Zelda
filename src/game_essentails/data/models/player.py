@@ -9,10 +9,36 @@ class StatData:
     base: int
     max: int
     initial_upgrade_cost: int
-    should_be_shown: Optional[bool] = field(default = None)
+
+    can_be_regened: bool = field(default = False)
+    regen_rate_in_sec: float = field(default = 1)
+    regen_amount_percentage: float = field(default = .01)
+    regen_max_percentage: float = field(default=100) # determines how much a stat can be regen automatically
+    depends_on: Optional[str] = field(default = None) # specify an other stat which will alter the regen amount
+
+    # non-file related params
+    should_be_shown: bool = field(init = False)
+    frame_c: int = field(default = 0, init = False)
 
     def __post_init__(self) -> None:
         self.should_be_shown = self.base != self.max
+
+    def regen(self) -> None:
+        if not self.can_be_regened: raise ValueError("This stat can't be regened automatically!")
+        if self.base >= (self.max * (self.regen_max_percentage / 100)): return
+
+        self.frame_c += 1
+        if self.frame_c >= (60 * self.regen_rate_in_sec): #! FIXME: magic number! should be game fps!
+            print("now")
+            self.base += round(self.base * self.regen_amount_percentage)
+            self.frame_c = 0
+
+    def updateRegenAmount(self, dependent_stat: "StatData") -> None:
+        # NOTE: this should be called after init and at level ups
+        # fpr instance self.regen_amount_percentage is dependent on the player's magic stat,
+        # here i can filter it dynamically 
+        if self.depends_on is None: raise AttributeError("There is no outer dependency on this stat, so it does not require an update-amount!")
+        self.regen_amount_percentage *= dependent_stat.base
 
 @dataclass
 class PlayerData(GameData):
@@ -47,6 +73,12 @@ class PlayerData(GameData):
                     self.__dict__[param] = StatData(**value) # type: ignore
                     self.__stat_key_list.append(param)
 
+        # some stat can have dependency, provide them       
+        stats_with_dependency = filter(lambda stat: stat.depends_on is not None, self.getRegenerableStats())
+        for stat_with_dependency in stats_with_dependency:
+            if stat_with_dependency.depends_on is None: continue # should not happen bc of the filter but mypy can't understand that
+            stat_with_dependency.updateRegenAmount(self.getStat(stat_with_dependency.depends_on))
+
     @property
     def stat_count(self) -> int:
         return self.__stat_count
@@ -61,3 +93,9 @@ class PlayerData(GameData):
             raise AttributeError(error_msg)
         
         return self.__dict__[stat_name]
+
+    def getRealStats(self) -> List[StatData]:
+        return [self.__dict__[stat_name] for stat_name in self.__stat_key_list]
+
+    def getRegenerableStats(self) -> List[StatData]:
+        return list(filter(lambda stat: stat.can_be_regened, self.getRealStats()))
