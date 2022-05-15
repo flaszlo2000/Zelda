@@ -8,9 +8,10 @@
         "speed": 3,
         "resistance": 3,
         "attack_radius": 80,
-        "notice_radius": 360
+        "notice_radius": 360,
+        "graphics_folder_src": "./graphics/monsters/squid"
     },
-    "raccoon": {
+    "racoon": {
         "health": 300,
         "exp": 250,
         "damage": 40,
@@ -19,7 +20,8 @@
         "speed": 2,
         "resistance": 3,
         "attack_radius": 120,
-        "notice_radius": 400
+        "notice_radius": 400,
+        "graphics_folder_src": "./graphics/monsters/raccoon"
     },
     "spirit": {
         "health": 100,
@@ -30,7 +32,8 @@
         "speed": 4,
         "resistance": 3,
         "attack_radius": 60,
-        "notice_radius": 350
+        "notice_radius": 350,
+        "graphics_folder_src": "./graphics/monsters/spirit"
     },
     "bamboo": {
         "health": 70,
@@ -41,6 +44,7 @@
         "speed": 3,
         "resistance": 3,
         "attack_radius": 50,
-        "notice_radius": 300
+        "notice_radius": 300,
+        "graphics_folder_src": "./graphics/monsters/bamboo"
     }
 }

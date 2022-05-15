@@ -55,7 +55,9 @@ if __name__ == "__main__":
     setting_loader = SettingLoader(Path("./settings"))
     setting_loader.importSettings()
 
-    print(setting_loader.getSingleValueFrom("common", "ui_font"))
-    print(setting_loader.getSingleValueFrom("hitbox_offset", "player"))
-
-    print(setting_loader["players"])
+    # tests
+    # print(setting_loader.getSingleValueFrom("common", "ui_font"))
+    # print(setting_loader.getSingleValueFrom("hitbox_offset", "player"))
+    # print(setting_loader["players"])
+    for content in setting_loader["monsters"]:
+        print(content)

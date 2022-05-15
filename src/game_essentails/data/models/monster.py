@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from pathlib import Path
 
 from .base import GameData
+from .graphics_base import GraphicsFolder, obtain_folder_content
 
 
 @dataclass
@@ -21,3 +23,8 @@ class MonsterData(GameData):
 
     # source related infos
     attack_sound_src: str
+    graphics_folder_src: str
+    graphics_folder: GraphicsFolder = field(init = False)
+
+    def __post_init__(self):
+        self.graphics_folder = obtain_folder_content(Path(self.graphics_folder_src))
