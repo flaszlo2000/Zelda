@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List
 
 from .base import GameData
 
@@ -14,7 +14,7 @@ class StatData:
     regen_rate_in_sec: float = field(default = .5)
     regen_amount_percentage: float = field(default = 1)
     regen_max_percentage: float = field(default=100) # determines how much a stat can be regen automatically
-    depends_on: Optional[str] = field(default = None) # specify an other stat which will alter the regen amount
+    depends_on: List[str] = field(default_factory = list) # specify an other stat which will alter the regen amount
 
     # non-file related params
     should_be_shown: bool = field(init = False)
@@ -40,7 +40,7 @@ class StatData:
         # NOTE: this should be called after init and at level ups
         # fpr instance self.regen_amount_percentage is dependent on the player's magic stat,
         # here i can filter it dynamically 
-        if self.depends_on is None: raise AttributeError("There is no outer dependency on this stat, so it does not require an update-amount!")
+        if not self.depends_on: raise AttributeError("There is no outer dependency on this stat, so it does not require an update-amount!")
         self.regen_amount_percentage *= dependent_stat.base
 
 @dataclass
@@ -77,10 +77,10 @@ class PlayerData(GameData):
                     self.__stat_key_list.append(param)
 
         # some stat can have dependency, provide them       
-        stats_with_dependency = filter(lambda stat: stat.depends_on is not None, self.getRegenerableStats())
+        stats_with_dependency = filter(lambda stat: stat.depends_on, self.getRegenerableStats())
         for stat_with_dependency in stats_with_dependency:
-            if stat_with_dependency.depends_on is None: continue # should not happen bc of the filter but mypy can't understand that
-            stat_with_dependency.updateRegenAmount(self.getStat(stat_with_dependency.depends_on))
+            for dependency in stat_with_dependency.depends_on:
+                stat_with_dependency.updateRegenAmount(self.getStat(dependency))
 
     @property
     def stat_count(self) -> int:

@@ -14,7 +14,7 @@
             "initial_upgrade_cost": 100,
 
             "can_be_regened": true,
-            "depends_on": "magic",
+            "depends_on": ["magic"],
             "regen_rate_in_sec": 0,
             "regen_amount_percentage": 0.05
         },  
