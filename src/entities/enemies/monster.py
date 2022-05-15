@@ -36,6 +36,7 @@ class BaseMonster(LivingEntity, ABC):
         if self._stats.graphics_folder.idle is not None:
             placeholder_sprite = self._stats.graphics_folder.idle[0]
         else:
+            print(f"[*] WARNING: placeholder sprite was not found for: {self._stats.name}")
             placeholder_sprite = Path("./graphics/monsters/spirit/idle/0.png")
 
         super().__init__(

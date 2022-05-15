@@ -1,7 +1,11 @@
 import pygame
-from setting_handler import *
-from entity import Entity
+
 from data_loader import *
+from entity import Entity
+from setting_handler import *
+
+#! not in use, only kept to check for features
+raise NotImplementedError()
 
 class Enemy(Entity):
     def __init__(self,monster_name,pos,groups,obstacle_sprites,damage_player,trigger_death_particles,add_exp):

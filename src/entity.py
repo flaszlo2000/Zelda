@@ -1,5 +1,10 @@
-import pygame
 from math import sin
+
+import pygame
+
+#! not in use, only kept to check for features
+raise NotImplementedError()
+
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups, is_player: bool = False):
