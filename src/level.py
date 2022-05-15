@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 from random import choice, randint
-from typing import List, Optional
+from typing import Dict, List, Optional, cast
 
 import pygame
 from pygame.surface import Surface
 
-from data_loader import *
+from data_loader import import_csv_layout, import_folder
 # from player import Player
 from debug import debug
-from enemy import Enemy
+# from enemy import Enemy
 from entities.entity_dict import ENTITY_DICT
 from entities.player import Player
 from game_essentails.game_state import GamePauser
@@ -55,6 +55,7 @@ class BaseLevel(ABC):
         return self.player
 #endregion
 
+class MapConfigError(Exception):...
 
 class Level: 
     def __init__(self, game_pauser: GamePauser, sprite_groups: Optional[SpriteGroups] = None):
@@ -77,7 +78,7 @@ class Level:
         self.magic_player = MagicPlayer(self.animation_player) # NOTE: does this need refactor?
 
     @staticmethod
-    def _fetchLayouts() -> dict:
+    def _fetchLayouts() -> Dict[str, List[List[str]]]:
         layouts = {
             'boundary': import_csv_layout('./map/map_FloorBlocks.csv'),
             'grass': import_csv_layout('./map/map_Grass.csv'),
@@ -88,7 +89,7 @@ class Level:
         return layouts
 
     @staticmethod
-    def _fetchGraphics() -> dict:
+    def _fetchGraphics() -> Dict[str, List[Surface]]:
         # FIXME: use ImageProvider
         graphics = {
             'grass': import_folder('./graphics/grass'),
@@ -98,13 +99,12 @@ class Level:
         return graphics
 
     def create_map(self) -> Player:
-        player: Player = None
+        player: Optional[Player] = None
         was_not_found: List[str] = [] # to store the ids of the not found entities
 
         layouts = Level._fetchLayouts()
         graphics = Level._fetchGraphics()
         tile_size = setting_loader.getSingleValueFrom("common", "tile_size")
-
 
         for layout_name, grid in layouts.items():
             for y, row in enumerate(grid):
@@ -113,15 +113,15 @@ class Level:
 
                     # NOTE: is it ok to not store anywhere these objects?
                     if layout_name == 'boundary':
-                        BoundaryTile(self.sprite_groups, [x, y], Surface((tile_size, tile_size)))
+                        BoundaryTile(self.sprite_groups, (x, y), Surface((tile_size, tile_size)))
 
                     if layout_name == 'grass':
                         random_grass_image = choice(graphics['grass'])
-                        GrassTile(self.sprite_groups, [x, y], random_grass_image) 
+                        GrassTile(self.sprite_groups, (x, y), random_grass_image) 
 
                     if layout_name == 'object':
                         surface_image = graphics['objects'][int(col)]
-                        RealObjectTile(self.sprite_groups, [x, y], surface_image)
+                        RealObjectTile(self.sprite_groups, (x, y), surface_image)
 
                     if layout_name == 'entities':
                         if col not in ENTITY_DICT.keys():
@@ -131,38 +131,15 @@ class Level:
 
                             continue
                         
-                        # current_entity = ENTITY_DICT[col](
-                        #     (x * tile_size, y * tile_size),
-                        #     [self.sprite_groups.visible_sprites],
-                        #     self.sprite_groups.obstacle_sprites
-                        # )
-
-                        #! FIXME: at this point this coulb be only the Player
                         current_entity = ENTITY_DICT[col](
                             self.sprite_groups,
-                            (x, y),
+                            (x, y)
                         ) 
 
                         if current_entity.isPlayer():
-                            player = current_entity
+                            player = cast(Player, current_entity)
 
-                        # if col == '390': monster_name = 'bamboo'
-                        # elif col == '391': monster_name = 'spirit'
-                        # elif col == '392': monster_name ='raccoon'
-                        # else: monster_name = 'squid'
-                        # Enemy(
-                        #     monster_name,
-                        #     (x,y),
-                        #     [self.visible_sprites,self.attackable_sprites],
-                        #     self.obstacle_sprites,
-                        #     self.damage_player,
-                        #     self.trigger_death_particles,
-                        #     self.add_exp)
-        
-        # #region TEST # TODO: remove this
-        # test_new_player = Player(self.sprite_groups, (33, 21))
-        # #endregion
-
+        if player is None: raise MapConfigError("Map did not contain any Player!")
         return player
 
     #region TODO: move this to player level

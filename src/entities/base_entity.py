@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from math import sin
-from typing import Tuple
+from typing import NoReturn, Optional, Tuple, overload
 
 from game_essentails.sprite_groups import SpriteGroups
 from game_essentails.tiles.base_tile import NormalTile
@@ -34,7 +34,16 @@ class BaseEntity(NormalTile, ABC):
     def verticalCollision(self) -> None:...
 
 class LivingEntity(BaseEntity):
-    def __init__(self, sprite_groups: SpriteGroups, _position: Tuple[int, int], image_surface: Surface):
+    # region __init__ overloads
+    @overload
+    def __init__(self, sprite_groups: SpriteGroups, _position: Tuple[int, int], image_surface: Surface) -> None:...
+    @overload
+    def __init__(self, sprite_groups: SpriteGroups, _position: Tuple[int, int], image_surface: Optional[None] = None) -> NoReturn:...
+    # endregion
+    def __init__(self, sprite_groups: SpriteGroups, _position: Tuple[int, int], image_surface: Optional[Surface] = None):
+        # image_surface won't be required in the subclasses but here it is, so there is a little workaround to fix that
+        if image_surface is None: raise AttributeError("image_surface should not be None, it must be provided!")
+
         super().__init__(sprite_groups, _position, image_surface)
 
         #region TODO: replace this, I think this is needed for animations and particles

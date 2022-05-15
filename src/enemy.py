@@ -1,7 +1,7 @@
 import pygame
 
 from data_loader import *
-from entity import Entity
+# from entity import Entity
 from setting_handler import *
 
 #! not in use, only kept to check for features
