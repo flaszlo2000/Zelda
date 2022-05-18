@@ -78,9 +78,12 @@ class LivingEntity(BaseEntity):
                 if self.direction.y < 0: # moving up
                     self.hitbox.top = sprite.hitbox.bottom  # type: ignore
 
-    def wave_value(self):
+    def wave_value(self) -> int:
         value = sin(get_ticks())
         if value >= 0: 
             return 255
         else: 
             return 0
+
+    def die(self) -> None:
+        print("dead")

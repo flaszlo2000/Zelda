@@ -5,11 +5,12 @@ graphics_src is needed in the players.json
 - clean code, mypy
 
 ### p1) (doing)
-- player reconstruct (and throw out old player.py)
+- effect system for potions, buffs and more
 
 ### p2)
 - trial ee listener
-- enemies
+- enemies:
+    - they are getting rendered
 
 
 ### p3)
@@ -74,3 +75,5 @@ life is good
 - reconstruct folder and file structure:
     - [x] level_handler folder:
         - [x] data_loader into this folder, with image_provider
+
+- player reconstruct (and throw out old player.py)

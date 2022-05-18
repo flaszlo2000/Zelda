@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 import pygame
 
+from game_essentails.effect.main import DeathCurse, EffectAdapter
 from game_essentails.events import key_broadcast_subject
 from game_essentails.game_state import GameState
 from game_essentails.level_handling.level_handler import LevelHandler
@@ -57,7 +58,8 @@ class Game:
         self.key_binding_dict = {
             pygame.K_m: self.level_handler.toggleMenu,
             pygame.K_ESCAPE: self.showMenu,
-            pygame.K_0: lambda: self.level_handler.changeLevel("test")
+            pygame.K_0: lambda: self.level_handler.changeLevel("test"),
+            pygame.K_1: self.castDeathCurseOnPlayer
         }
 
     def _quit(self) -> None:
@@ -99,6 +101,16 @@ class Game:
             self.clock.tick(get_common_setting("fps"))
 
         self._quit()
+
+    def castDeathCurseOnPlayer(self) -> None:
+        #! test purpose, remove this
+        # this is only for testing the entity system and to create a good and extendable effect system
+        death_effect = EffectAdapter(base = 0, max = 10, can_be_regened = True, regen_rate_in_sec = 1, regen_amount_percentage = 10)
+        death_effect \
+            .attachEffect(DeathCurse()) \
+            .attachEntity(self.level_handler._level.getPlayer())
+
+        self.game_state.effect_handler += death_effect
 
     def sigint(self) -> None:
         self.game_state.kill()

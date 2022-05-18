@@ -11,7 +11,7 @@ from debug import debug
 # from enemy import Enemy
 from entities.entity_dict import ENTITY_DICT
 from entities.player import Player
-from game_essentails.game_state import GamePauser
+from game_essentails.pauser import GamePauser
 from game_essentails.sprite_groups import SpriteGroups
 from game_essentails.tiles.boundary import BoundaryTile
 from game_essentails.tiles.grass import GrassTile
