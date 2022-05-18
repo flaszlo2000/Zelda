@@ -14,7 +14,7 @@ from scripts.observer import KeyValueObserverMsg
 from setting_handler import get_common_setting
 
 from .basic_ui_element import BasicUiElement
-from .button import ButtonData, ButtonFactory, ButtonGroup, ButtonText
+from .button import ButtonData, ButtonFactory, ButtonGroup, UiText
 from .toggle import Toggle
 
 
@@ -24,9 +24,9 @@ class Menu(BasicUiElement):
 
         button_factory = ButtonFactory(self.isVisible)
         button_data: List[ButtonData] = [
-            ButtonData(ButtonText("exit"), lambda: key_broadcast_subject.notify(QUIT), (150, 100, 50, 50)),
-            ButtonData(ButtonText("save"), lambda: key_broadcast_subject.notify(SAVE_GAME), (250, 100, 50, 50)),
-            ButtonData(ButtonText("load"), lambda: key_broadcast_subject.notify(LOAD_GAME), (350, 100, 50, 50)),
+            ButtonData(UiText("exit"), lambda: key_broadcast_subject.notify(QUIT), (150, 100, 50, 50)),
+            ButtonData(UiText("save"), lambda: key_broadcast_subject.notify(SAVE_GAME), (250, 100, 50, 50)),
+            ButtonData(UiText("load"), lambda: key_broadcast_subject.notify(LOAD_GAME), (350, 100, 50, 50)),
         ]
 
         self._button_group = ButtonGroup(button_data, button_factory)

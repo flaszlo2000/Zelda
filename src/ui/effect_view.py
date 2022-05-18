@@ -6,18 +6,22 @@ from pygame.surface import Surface
 from setting_handler import get_common_setting
 
 from .basic_ui_element import BasicUiElement
+from .button import UiText
 
 
 class EffectView(BasicUiElement):
     count = 0 # helps to display shifted boxes
     gap_between_effects = 10
     size = get_common_setting("effect_box_size")
+    height = get_common_setting("effect_box_height")
     alpha = get_common_setting("effect_alpha")
     max_count_in_line = 5
 
     def __init__(self, effect: EffectAdapter, end_callback: Callable[["EffectView"], None]):
         self.effect = effect
-        self.end_end_callback = end_callback
+        self.end_callback = end_callback
+
+        self.font = UiText()
 
         self.id = EffectView.count
         EffectView.count += 1
@@ -25,12 +29,13 @@ class EffectView(BasicUiElement):
         self.surface.set_alpha(EffectView.alpha)
         self.surface.fill("#ffffff")
 
+
     def effectTick(self) -> None:
         self.effect.regen()
 
     def draw(self, _surface: Optional[Surface] = None) -> None:
         if self.effect.hasReachedEnd():
-            self.end_end_callback(self)
+            self.end_callback(self)
             EffectView.count -= 1 #! FIXME: this is going to make issues!!
             return
 
@@ -39,14 +44,17 @@ class EffectView(BasicUiElement):
         else:
             surface = _surface
 
-        surface.blit(
+        # display box with line and column shift
+        box = surface.blit(
             self.surface,
             (
                 EffectView.gap_between_effects + (
                     (self.id % EffectView.max_count_in_line) * (EffectView.size + EffectView.gap_between_effects)
                 ),
-                60 + (int(self.id / EffectView.max_count_in_line) * 60)
+                EffectView.height + (int(self.id / EffectView.max_count_in_line) * EffectView.height)
             )
         )
 
+        self.font.text = "efct"
+        surface.blit(self.font.renderFont(), box)
 

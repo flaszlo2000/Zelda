@@ -17,7 +17,7 @@ from ui.basic_ui_element import ClickableUiElement
 
 
 @dataclass
-class ButtonText:
+class UiText: #! TODO: move this to a separate file
     "Text ontop the button"
     text: str = field(default = "")
     font: Optional[Font] = field(default = None) 
@@ -45,7 +45,7 @@ class ButtonText:
 @dataclass
 class ButtonData:
     "Representation of a Button initial parameters"
-    button_text: ButtonText
+    button_text: UiText
     command: Callable[..., None]
     rect_pos: Tuple[int, int, int, int]
     colors: Tuple[Color, Color] = field(default= (Color("#ff0000"), Color("#00ff00")))
