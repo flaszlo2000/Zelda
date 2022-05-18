@@ -5,6 +5,7 @@ from pygame.display import get_surface
 from pygame.draw import rect as draw_rect
 from pygame.rect import Rect
 from pygame.surface import Surface
+from setting_handler import get_common_setting
 
 from .basic_ui_element import BasicUiElement
 
@@ -12,7 +13,8 @@ from .basic_ui_element import BasicUiElement
 class EffectView(BasicUiElement):
     count = 0 # helps to display
     gap_between_effects = 10
-    size = 50
+    size = get_common_setting("effect_box_size")
+    alpha = get_common_setting("effect_alpha")
 
     def __init__(self, effect: EffectAdapter, end_callback: Callable[["EffectView"], None]):
         self.effect = effect
@@ -20,7 +22,9 @@ class EffectView(BasicUiElement):
 
         self.id = EffectView.count
         EffectView.count += 1
-
+        self.surface = Surface((EffectView.size, EffectView.size))
+        self.surface.set_alpha(EffectView.alpha)
+        self.surface.fill("#ffffff")
 
     def effectTick(self) -> None:
         self.effect.regen()
@@ -36,14 +40,12 @@ class EffectView(BasicUiElement):
         else:
             surface = _surface
         
-        draw_rect(
-            surface,
-            "#ffffff",
-            Rect(
+
+        surface.blit(
+            self.surface,
+            (
                 EffectView.gap_between_effects + (self.id * (EffectView.size + EffectView.gap_between_effects)),
-                60,
-                EffectView.size,
-                EffectView.size
+                60
             )
         )
 
