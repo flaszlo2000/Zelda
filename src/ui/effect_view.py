@@ -2,8 +2,6 @@ from typing import Callable, Optional
 
 from game_essentails.effect.main import EffectAdapter
 from pygame.display import get_surface
-from pygame.draw import rect as draw_rect
-from pygame.rect import Rect
 from pygame.surface import Surface
 from setting_handler import get_common_setting
 
@@ -11,7 +9,7 @@ from .basic_ui_element import BasicUiElement
 
 
 class EffectView(BasicUiElement):
-    count = 0 # helps to display
+    count = 0 # helps to display shifted boxes
     gap_between_effects = 10
     size = get_common_setting("effect_box_size")
     alpha = get_common_setting("effect_alpha")
@@ -39,7 +37,6 @@ class EffectView(BasicUiElement):
             surface = get_surface()
         else:
             surface = _surface
-        
 
         surface.blit(
             self.surface,
