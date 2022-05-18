@@ -13,6 +13,7 @@ class EffectView(BasicUiElement):
     gap_between_effects = 10
     size = get_common_setting("effect_box_size")
     alpha = get_common_setting("effect_alpha")
+    max_count_in_line = 5
 
     def __init__(self, effect: EffectAdapter, end_callback: Callable[["EffectView"], None]):
         self.effect = effect
@@ -41,8 +42,10 @@ class EffectView(BasicUiElement):
         surface.blit(
             self.surface,
             (
-                EffectView.gap_between_effects + (self.id * (EffectView.size + EffectView.gap_between_effects)),
-                60
+                EffectView.gap_between_effects + (
+                    (self.id % EffectView.max_count_in_line) * (EffectView.size + EffectView.gap_between_effects)
+                ),
+                60 + (int(self.id / EffectView.max_count_in_line) * 60)
             )
         )
 
