@@ -1,3 +1,4 @@
+from math import ceil
 from typing import Callable, Optional
 
 from game_essentails.effect.main import EffectAdapter
@@ -8,6 +9,21 @@ from setting_handler import get_common_setting
 from .basic_ui_element import BasicUiElement
 from .button import UiText
 
+
+def calculate_remaining_time(effect_adapter: EffectAdapter) -> str:
+
+    regen_multiplier = effect_adapter.regen_amount_percentage / effect_adapter.regen_rate_in_sec 
+    remaining_percentage = (effect_adapter.max - effect_adapter.base) / (effect_adapter.max / 100) 
+
+    remaining_seconds = remaining_percentage/regen_multiplier
+    result = f"{round(remaining_seconds)}s"
+
+    if remaining_seconds > 60*60:
+        result = f"{round(remaining_seconds/(60*60), 1)}h"
+    elif remaining_seconds > 60:
+        result = f"{round(remaining_seconds/60, 1)}m"
+
+    return result
 
 class EffectView(BasicUiElement):
     count = 0 # helps to display shifted boxes
@@ -55,6 +71,6 @@ class EffectView(BasicUiElement):
             )
         )
 
-        self.font.text = "efct"
+        self.font.text = calculate_remaining_time(self.effect)
         surface.blit(self.font.renderFont(), box)
 
