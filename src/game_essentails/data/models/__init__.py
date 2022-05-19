@@ -1,5 +1,7 @@
 from typing import Dict, Type
 
+from game_essentails.data.models.effect import EffectData
+
 from .base import GameData
 from .common_conf import CommonConfData
 from .hitbox_offset import HitboxOffset
@@ -16,4 +18,5 @@ HANDLER_MAP: Dict[str, Type[GameData]] = {
     "common": CommonConfData,
     "hitbox_offset": HitboxOffset,
     "players": PlayerData,
+    "effects": EffectData,
 }

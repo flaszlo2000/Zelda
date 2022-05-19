@@ -52,6 +52,7 @@ class SettingLoader:
 
 
 if __name__ == "__main__":
+    from pprint import pprint
     setting_loader = SettingLoader(Path("./settings"))
     setting_loader.importSettings()
 
@@ -59,5 +60,7 @@ if __name__ == "__main__":
     # print(setting_loader.getSingleValueFrom("common", "ui_font"))
     # print(setting_loader.getSingleValueFrom("hitbox_offset", "player"))
     # print(setting_loader["players"])
-    for content in setting_loader["monsters"]:
-        print(content)
+    # for content in setting_loader["monsters"]:
+    #     print(content)
+
+    pprint(setting_loader["effects"])

@@ -1,0 +1,30 @@
+{
+    "heal": {
+        "perTick": {
+            "on": "LivingEntity",
+            "stat": "health"
+        },
+
+        "regen_rate_in_sec": 0.5,
+        "regen_amount_percentage": 7
+    },
+
+    "slow": {
+        "untilEnd": {
+            "on": "LivingEntity",
+            "stat": "speed"
+        },
+
+        "regen_amount_percentage": 20
+    },
+
+    "death": {
+        "end": {
+            "on": "LivingEntity",
+            "call": "die"
+        },
+
+        "regen_rate_in_sec": 40,
+        "regen_amount_percentage": 1
+    }
+}
