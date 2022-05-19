@@ -1,3 +1,5 @@
+#! test, remove this
+from datetime import datetime
 from math import ceil
 from typing import Callable, Optional
 
@@ -45,6 +47,7 @@ class EffectView(BasicUiElement):
         self.surface.set_alpha(EffectView.alpha)
         self.surface.fill("#ffffff")
 
+        print(datetime.now())
 
     def effectTick(self) -> None:
         self.effect.regen()

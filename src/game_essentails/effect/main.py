@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+#! todo remove this
+from datetime import datetime
 
 from entities.base_entity import LivingEntity
 from game_essentails.data.models.stat import StatBase
@@ -45,3 +47,4 @@ class EffectAdapter(StatBase):
 
         if self.hasReachedEnd():
             self.effect.end(self.entity_that_has_been_cast_on)
+            print(datetime.now())
