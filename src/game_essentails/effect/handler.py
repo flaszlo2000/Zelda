@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from src.game_essentails.pauser import GamePauser
+from game_essentails.pauser import GamePauser
 from ui.effect_view import EffectView
 
 from .main import EffectAdapter
