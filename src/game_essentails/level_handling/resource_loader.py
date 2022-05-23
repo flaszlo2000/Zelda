@@ -59,8 +59,9 @@ if __name__ == "__main__":
     # tests
     # print(setting_loader.getSingleValueFrom("common", "ui_font"))
     # print(setting_loader.getSingleValueFrom("hitbox_offset", "player"))
-    # print(setting_loader["players"])
+    pprint(setting_loader["players"])
     # for content in setting_loader["monsters"]:
     #     print(content)
 
-    pprint(setting_loader["effects"])
+    # for effect in setting_loader["effects"]:
+    #     pprint(effect)

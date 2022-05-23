@@ -3,6 +3,7 @@ from enum import Enum, auto
 from typing import Optional
 
 from game_essentails.data.models.base import GameData
+from scripts.dataclass_typeconvert import type_check
 
 from .stat import StatBase
 
@@ -13,8 +14,8 @@ class SupportedToHaveEffect(Enum):
 @dataclass
 class EffectDescription:
     on: str
-    stat: Optional[str]
-    call: Optional[str]
+    stat: Optional[str] = field(default = None)
+    call: Optional[str]= field(default = None)
 
 @dataclass
 class EffectData(StatBase, GameData):
@@ -30,6 +31,7 @@ class EffectData(StatBase, GameData):
     end: Optional[EffectDescription] = field(default = None)
     untilEnd: Optional[EffectDescription] = field(default = None)
 
+    @type_check
     def __post_init__(self):
         StatBase.__post_init__(self)
         if not any([self.perTick, self.end, self.untilEnd]):

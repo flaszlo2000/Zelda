@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Tuple, cast
 
 
 @dataclass
@@ -11,7 +11,7 @@ class StatBase:
     regen_rate_in_sec: float = field(default = .5) # 1 == 1call/s, .5 == 2call/s, 20 == 1call/20s
     regen_amount_percentage: float = field(default = 1)
     regen_max_percentage: float = field(default = 100) # determines how much a stat can be regen automatically
-    depends_on: List[str] = field(default_factory = list) # specify an other stat which will alter the regen amount
+    depends_on: Tuple[str] = field(default= cast(Tuple[str], tuple())) # specify an other stat which will alter the regen amount
 
     # non-file related params
     should_be_shown: bool = field(init = False, default = False)
