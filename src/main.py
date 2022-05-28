@@ -110,23 +110,6 @@ class Game:
 
         for effect_data in setting_loader["effects"]:
             player.castEffectOn(cast(EffectData, effect_data))
-        #     effect_adapter = EffectAdapter() \
-        #         .attachEntity(player) \
-        #         .attachEffectData(cast(EffectData, effect_data))
-        #     self.game_state.effect_handler += effect_adapter
-        #     effect_adaper = EffectAdapter(**effect)
-        #     print(effect_adaper)
-
-        # death_effect = EffectAdapter(base = 0, max = 100, can_be_regened = True, regen_rate_in_sec = 40, regen_amount_percentage = 1)
-        # death_effect \
-        #     .attachEffect(DeathCurse()) \
-        #     .attachEntity(player)
-
-        # self.game_state.effect_handler += death_effect
-        # 2022-05-19 00:01:07.744629
-        # dead
-        # 2022-05-19 01:05:48.151157
-
 
     def sigint(self) -> None:
         self.game_state.kill()
