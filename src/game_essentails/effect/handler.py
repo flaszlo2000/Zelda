@@ -35,7 +35,7 @@ class EffectHandler:
             if not self._game_paused:
                 effect_view.effectTick()
             effect_view.draw()
-
+        
     def endCallback(self, effect: EffectView) -> None:
         self.effect_view_list.remove(effect)
 

@@ -74,6 +74,7 @@ class Player(LivingEntity):
             stat.regen()
 
     def update(self, *args: List[Any]) -> None:
+        super().update(*args)
         # NOTE: called by pygame as a default behaviour because all Sprite has this method
         self.input()
         self.move(self._stats.speed.base)

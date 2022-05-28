@@ -1,6 +1,6 @@
 import signal
 import sys
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 import pygame
 
@@ -11,8 +11,9 @@ from game_essentails.save_handling.constants import MUSIC_ON_STARTUP
 from game_essentails.save_handling.data_request import data_request
 from level import Level
 from scripts.observer import CallbackObserver, EventObserverMsg
-from setting_handler import get_common_setting
+from setting_handler import get_common_setting, setting_loader
 from sound import SoundHandler
+from src.game_essentails.data.models.effect import EffectData
 from ui.ui import UI
 
 
@@ -106,9 +107,9 @@ class Game:
         # this is only for testing the entity system and to create a good and extendable effect system
 
         player = self.level_handler._level.getPlayer()
-        print("TODO")
 
-        # for effect_data in setting_loader["effects"]:
+        for effect_data in setting_loader["effects"]:
+            player.castEffectOn(cast(EffectData, effect_data))
         #     effect_adapter = EffectAdapter() \
         #         .attachEntity(player) \
         #         .attachEffectData(cast(EffectData, effect_data))
