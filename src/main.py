@@ -4,7 +4,6 @@ from typing import Any, Optional
 
 import pygame
 
-from game_essentails.effect.main import DeathCurse, EffectAdapter
 from game_essentails.events import key_broadcast_subject
 from game_essentails.game_state import GameState
 from game_essentails.level_handling.level_handler import LevelHandler
@@ -105,12 +104,24 @@ class Game:
     def castDeathCurseOnPlayer(self) -> None:
         #! test purpose, remove this
         # this is only for testing the entity system and to create a good and extendable effect system
-        death_effect = EffectAdapter(base = 0, max = 100, can_be_regened = True, regen_rate_in_sec = 40, regen_amount_percentage = 1)
-        death_effect \
-            .attachEffect(DeathCurse()) \
-            .attachEntity(self.level_handler._level.getPlayer())
 
-        self.game_state.effect_handler += death_effect
+        player = self.level_handler._level.getPlayer()
+        print("TODO")
+
+        # for effect_data in setting_loader["effects"]:
+        #     effect_adapter = EffectAdapter() \
+        #         .attachEntity(player) \
+        #         .attachEffectData(cast(EffectData, effect_data))
+        #     self.game_state.effect_handler += effect_adapter
+        #     effect_adaper = EffectAdapter(**effect)
+        #     print(effect_adaper)
+
+        # death_effect = EffectAdapter(base = 0, max = 100, can_be_regened = True, regen_rate_in_sec = 40, regen_amount_percentage = 1)
+        # death_effect \
+        #     .attachEffect(DeathCurse()) \
+        #     .attachEntity(player)
+
+        # self.game_state.effect_handler += death_effect
         # 2022-05-19 00:01:07.744629
         # dead
         # 2022-05-19 01:05:48.151157

@@ -36,5 +36,3 @@ class EffectData(StatBase, GameData):
         StatBase.__post_init__(self)
         if not any([self.perTick, self.end, self.untilEnd]):
             raise ValueError("Every parameter is None, at least one of them should be set!")
-
-        

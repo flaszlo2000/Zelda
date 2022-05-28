@@ -1,9 +1,7 @@
-#! test, remove this
-from datetime import datetime
-from math import ceil
+from datetime import datetime  # ! test, remove this
 from typing import Callable, Optional
 
-from game_essentails.effect.main import EffectAdapter
+from game_essentails.effect.effects import Effect
 from pygame.display import get_surface
 from pygame.surface import Surface
 from setting_handler import get_common_setting
@@ -12,8 +10,7 @@ from .basic_ui_element import BasicUiElement
 from .button import UiText
 
 
-def calculate_remaining_time(effect_adapter: EffectAdapter) -> str:
-
+def calculate_remaining_time(effect_adapter: Effect) -> str:
     regen_multiplier = effect_adapter.regen_amount_percentage / effect_adapter.regen_rate_in_sec 
     remaining_percentage = (effect_adapter.max - effect_adapter.base) / (effect_adapter.max / 100) 
 
@@ -35,8 +32,8 @@ class EffectView(BasicUiElement):
     alpha = get_common_setting("effect_alpha")
     max_count_in_line = 5
 
-    def __init__(self, effect: EffectAdapter, end_callback: Callable[["EffectView"], None]):
-        self.effect = effect
+    def __init__(self, effect: Effect, end_callback: Callable[["EffectView"], None]):
+        self._effect = effect 
         self.end_callback = end_callback
 
         self.font = UiText()
@@ -50,10 +47,10 @@ class EffectView(BasicUiElement):
         print(datetime.now())
 
     def effectTick(self) -> None:
-        self.effect.regen()
+        self._effect.regen()
 
     def draw(self, _surface: Optional[Surface] = None) -> None:
-        if self.effect.hasReachedEnd():
+        if self._effect.hasReachedEnd():
             self.end_callback(self)
             EffectView.count -= 1 #! FIXME: this is going to make issues!!
             return
@@ -74,6 +71,6 @@ class EffectView(BasicUiElement):
             )
         )
 
-        self.font.text = calculate_remaining_time(self.effect)
+        self.font.text = calculate_remaining_time(self._effect)
         surface.blit(self.font.renderFont(), box)
 

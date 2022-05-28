@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple, cast
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 from game_essentails.data.models.hitbox_offset import HitboxOffset
 from game_essentails.sprite_groups import SpriteGroups
@@ -7,15 +7,27 @@ from pygame.rect import Rect
 from pygame.sprite import Group, Sprite
 from pygame.surface import Surface
 from setting_handler import setting_loader
+from src.game_essentails.data.models.effect import EffectData
+from src.game_essentails.effect.handler import EffectHandler
+from src.game_essentails.effect.main import EffectAdapter
 
 
 class AbstractBaseTile(Sprite, ABC):
     """This class is the base of all game objects (Objects, Player, etc) which has to inherit from Sprite and has a hitbox"""
-    def __init__(self, sprite_groups: SpriteGroups, _position: Tuple[int, int], image_surface: Surface):
+    def __init__(
+        self,
+        sprite_groups: SpriteGroups,
+        _position: Tuple[int, int],
+        image_surface: Surface,
+        effect_handler: Optional[EffectHandler] = None
+    ):
         super().__init__(self.getRelatedGroups(sprite_groups)) # type: ignore # pygame error
 
         tile_size = setting_loader.getSingleValueFrom("common", "tile_size")
         self.position = [position * tile_size for position in _position] # FIXME: is this used?
+
+        # every child of this class is able to get affected by effects
+        self.effect_handler = EffectHandler() if effect_handler is None else effect_handler
 
         # Fix mypy dataclass and abc issue
         self.image: Surface = image_surface
@@ -58,3 +70,9 @@ class AbstractBaseTile(Sprite, ABC):
         self.rect.top = y
         self.position = [x, y]
         self.setHitbox()
+
+    def update(self, *args: List[Any], **kwargs: Dict[str, Any]) -> None:
+        self.effect_handler.update()
+
+    def castEffectOn(self, effect_data: EffectData) -> None:
+        self.effect_handler += EffectAdapter.convert(effect_data)
