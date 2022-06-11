@@ -3,9 +3,12 @@ from typing import List
 
 from game_essentails.effect.effects import Effect
 from game_essentails.events import PAUSE_TOGGLE, key_broadcast_subject
+from pygame.sprite import Group
 from scripts.observer import CallbackObserver, StrObserverMsg
 from ui.effect_view import EffectView
 
+
+class EffectGroup(Group):...
 
 # TODO: find out is it player or not?
 @dataclass
@@ -21,14 +24,15 @@ class EffectHandler:
             PAUSE_TOGGLE
         )
 
-    def __iadd__(self, new: Effect) -> "EffectHandler":
-        new_effect_view = EffectView(new, self.endCallback)
+    def add(self, new: Effect, is_player: bool = False) -> None:
+        new_effect_view = EffectView(new, self.endCallback, use_ui_view = is_player)
         self.effect_view_list.append(new_effect_view)
 
-        return self
 
-    def add(self, new: Effect) -> None:
-        self += new
+    def __iadd__(self, new: Effect) -> "EffectHandler":
+        self.add(new)
+
+        return self
 
     def update(self) -> None:
         for effect_view in self.effect_view_list:

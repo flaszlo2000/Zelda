@@ -8,6 +8,7 @@ from pygame.key import get_pressed
 from pygame.sprite import Group
 from scripts.image_provider import image_provider
 from setting_handler import setting_loader
+from src.game_essentails.data.models.effect import EffectData
 
 from .base_entity import LivingEntity
 
@@ -83,3 +84,8 @@ class Player(LivingEntity):
     def getStat(self, stat: str) -> StatData:
         "Returns a stat of the player"
         return self._stats.getStat(stat)
+
+    def castEffectOn(self, effect_data: EffectData) -> None:
+        effect = self._getEffectForCast(effect_data)
+
+        self.effect_handler.add(effect, is_player = True)

@@ -3,7 +3,7 @@ from typing import Any, Callable, Optional
 
 from game_essentails.events import key_broadcast_subject
 from pygame.color import Color
-from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
+from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
 from pygame.surface import Surface
 from scripts.observer import EventObserverMsg, KeyObserver
 
@@ -35,3 +35,13 @@ class ClickableUiElement(BasicUiElement, KeyObserver[EventObserverMsg]):
 
     @abstractmethod
     def getStateColor(self) -> Color:...
+
+
+class HoverUiElement(BasicUiElement, KeyObserver[EventObserverMsg]):
+    def __init__(self, visibility: bool = False, parent_is_visible: Optional[Callable[..., Any]] = None):
+        super().__init__(visibility, parent_is_visible=parent_is_visible)
+
+        self.__registerForKeys()
+    
+    def __registerForKeys(self) -> None:
+        key_broadcast_subject.attach(self, MOUSEMOTION)

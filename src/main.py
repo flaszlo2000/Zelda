@@ -4,6 +4,7 @@ from typing import Any, Optional, cast
 
 import pygame
 
+from game_essentails.data.models.effect import EffectData
 from game_essentails.events import key_broadcast_subject
 from game_essentails.game_state import GameState
 from game_essentails.level_handling.level_handler import LevelHandler
@@ -13,7 +14,6 @@ from level import Level
 from scripts.observer import CallbackObserver, EventObserverMsg
 from setting_handler import get_common_setting, setting_loader
 from sound import SoundHandler
-from src.game_essentails.data.models.effect import EffectData
 from ui.ui import UI
 
 
@@ -59,7 +59,7 @@ class Game:
             pygame.K_m: self.level_handler.toggleMenu,
             pygame.K_ESCAPE: self.showMenu,
             pygame.K_0: lambda: self.level_handler.changeLevel("test"),
-            pygame.K_1: self.castDeathCurseOnPlayer
+            pygame.K_1: self.castAllEffectOnPlayer
         }
 
     def _quit(self) -> None:
@@ -75,7 +75,7 @@ class Game:
 
         handled_events = self.event_dict.keys()
         key_bindings = self.key_binding_dict.keys()
-        needed_mouse_event = [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP] # for observer (menu)
+        needed_mouse_event = [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION] # for observer (menu)
 
         while self.game_state.isAlive():
             for event in pygame.event.get():
@@ -102,14 +102,18 @@ class Game:
 
         self._quit()
 
-    def castDeathCurseOnPlayer(self) -> None:
+    def castAllEffectOnPlayer(self) -> None:
         #! test purpose, remove this
         # this is only for testing the entity system and to create a good and extendable effect system
 
         player = self.level_handler._level.getPlayer()
 
-        for effect_data in setting_loader["effects"]:
-            player.castEffectOn(cast(EffectData, effect_data))
+        # for effect_data in setting_loader["effects"]:
+        #     player.castEffectOn(cast(EffectData, effect_data))
+
+        death_effect = list(filter(lambda element: element.name == "death",setting_loader["effects"]))[0]
+
+        player.castEffectOn(cast(EffectData, death_effect))
 
     def sigint(self) -> None:
         self.game_state.kill()

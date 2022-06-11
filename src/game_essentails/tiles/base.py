@@ -1,15 +1,16 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, cast
 
+from game_essentails.data.models.effect import EffectData
 from game_essentails.data.models.hitbox_offset import HitboxOffset
+from game_essentails.effect.effects import Effect
+from game_essentails.effect.handler import EffectHandler
+from game_essentails.effect.main import EffectAdapter
 from game_essentails.sprite_groups import SpriteGroups
 from pygame.rect import Rect
 from pygame.sprite import Group, Sprite
 from pygame.surface import Surface
 from setting_handler import setting_loader
-from src.game_essentails.data.models.effect import EffectData
-from src.game_essentails.effect.handler import EffectHandler
-from src.game_essentails.effect.main import EffectAdapter
 
 
 class AbstractBaseTile(Sprite, ABC):
@@ -72,7 +73,13 @@ class AbstractBaseTile(Sprite, ABC):
         self.setHitbox()
 
     def update(self, *args: List[Any], **kwargs: Dict[str, Any]) -> None:
-        self.effect_handler.update()
+        self.effect_handler.update(*args, **kwargs)
+
+    def _getEffectForCast(self, effect_data: EffectData) -> Effect:
+        effect : Effect = EffectAdapter.convert(effect_data)
+        effect.owner_sprite = self
+
+        return effect
 
     def castEffectOn(self, effect_data: EffectData) -> None:
-        self.effect_handler += EffectAdapter.convert(effect_data)
+        self.effect_handler += self._getEffectForCast(effect_data)
