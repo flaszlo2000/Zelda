@@ -54,7 +54,7 @@ class KeyObserver(Observer[T]):...
     #     print(f"I {self} have been updated with this msg: {msg}")
 
 class Subject(ABC):
-    def __init__(self, observers: Dict[int, List[Observer[Any]]] = dict()):
+    def __init__(self, observers: Dict[int, List[Observer[Any]]] = dict()): # FIXME
         self._observers: Dict[int, List[Observer[Any]]] = observers
 
     @abstractmethod

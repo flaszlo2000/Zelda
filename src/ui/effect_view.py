@@ -102,7 +102,8 @@ class EffectView(HoverUiElement):
         self.end_callback = end_callback
         self._should_use_ui_view = use_ui_view
         self.view_strategy = NonUiRelatedView() if not self._should_use_ui_view else PlayerView()
-        self.settings = EffectViewSettings() if settings is None else settings 
+        self.settings = EffectViewSettings() if settings is None else settings
+        self.mouse_on_it = False
 
         self.font = UiText()
 
@@ -134,7 +135,7 @@ class EffectView(HoverUiElement):
 
 
         # display box with line and column shift
-        box = self.view_strategy.show(
+        self.box = self.view_strategy.show( # used for hover detection in updateByNotification
             surface,
             self.surface,
             self.settings,
@@ -146,13 +147,17 @@ class EffectView(HoverUiElement):
 
         if self._should_use_ui_view:
             self.sprite.image = image_provider.provideWithAlphaConvert("./graphics/particles/aura/0.png")
-            surface.blit(self.font.renderFont(), box)
+            surface.blit(self.font.renderFont(), self.box)
         else:
             self.sprite.image = self.font.renderFont()
-            self.sprite.rect = box
+            self.sprite.rect = self.box
             self.sprite.image.set_colorkey("#ffffff")
             self._effect.owner_sprite.groups()[0].add(self.sprite)
 
     def updateByNotification(self, msg: EventObserverMsg) -> None:
-        print(msg.value)
-        # self.surface.get_rect().collidepoint()
+        self.mouse_on_it = self.box.collidepoint(msg.value.pos)
+
+        if self.mouse_on_it: # FIXME: check for None
+            pass                
+
+

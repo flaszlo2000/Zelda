@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any, List, Optional, Tuple, cast
 
+from game_essentails.data.models.effect import EffectData
 from game_essentails.data.models.player import PlayerData, StatData
 from game_essentails.sprite_groups import SpriteGroups
 from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP
@@ -8,7 +9,6 @@ from pygame.key import get_pressed
 from pygame.sprite import Group
 from scripts.image_provider import image_provider
 from setting_handler import setting_loader
-from src.game_essentails.data.models.effect import EffectData
 
 from .base_entity import LivingEntity
 
