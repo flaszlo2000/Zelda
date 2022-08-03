@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, TypeVar
+from typing import (Any, Callable, Dict, Generic, List, Optional, SupportsInt,
+                    Tuple, TypeVar)
 
 from pygame.event import Event
 
@@ -54,23 +55,23 @@ class KeyObserver(Observer[T]):...
     #     print(f"I {self} have been updated with this msg: {msg}")
 
 class Subject(ABC):
-    def __init__(self, observers: Dict[int, List[Observer[Any]]] = dict()): # FIXME
-        self._observers: Dict[int, List[Observer[Any]]] = observers
+    def __init__(self, observers: Optional[Dict[SupportsInt, List[Observer[Any]]]] = None):
+        self._observers: Dict[SupportsInt, List[Observer[Any]]] = observers if observers is not None else dict()
 
     @abstractmethod
-    def attach(self, observer: Observer[Any], event: int) -> None:...
+    def attach(self, observer: Observer[Any], event: SupportsInt) -> None:...
 
     @abstractmethod
     def detach(self, observer: Observer[Any]) -> None:...
 
     @abstractmethod
-    def detachFrom(self, observer: Observer[Any], event: int) -> None:...
+    def detachFrom(self, observer: Observer[Any], event: SupportsInt) -> None:...
 
     @abstractmethod
-    def notify(self, event: int, msg: Optional[ObserverMsg] = None) -> None:...
+    def notify(self, event: SupportsInt, msg: Optional[ObserverMsg] = None) -> None:...
 
 class KeySubject(Subject):
-    def attach(self, observer: Observer[Any], event: int) -> None:
+    def attach(self, observer: Observer[Any], event: SupportsInt) -> None:
         self._observers[event] = [*self._observers.get(event, []), observer]
 
     def detach(self, observer: Observer[Any]) -> None:
@@ -78,7 +79,7 @@ class KeySubject(Subject):
             if observer in attached_observer_list:
                 self._observers[event].remove(observer)
 
-    def detachFrom(self, observer: Observer[Any], event: int):
+    def detachFrom(self, observer: Observer[Any], event: SupportsInt):
         if event not in self._observers.keys():
             raise KeyError(f"{event} is not present between the keys of the events")
 
@@ -87,7 +88,7 @@ class KeySubject(Subject):
 
         self._observers[event].remove(observer)
 
-    def notify(self, event: int, msg: Optional[ObserverMsg] = None) -> None:
+    def notify(self, event: SupportsInt, msg: Optional[ObserverMsg] = None) -> None:
         if msg is None:
             msg = StrObserverMsg()
 
@@ -98,4 +99,4 @@ class KeySubject(Subject):
             attached_observer.updateByNotification(msg)
 
     def getEventList(self) -> List[int]:
-        return list(self._observers.keys())
+        return list(map(int, self._observers.keys()))

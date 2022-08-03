@@ -101,9 +101,8 @@ class EffectView(HoverUiElement):
         self._effect = effect 
         self.end_callback = end_callback
         self._should_use_ui_view = use_ui_view
-        self.view_strategy = NonUiRelatedView() if not self._should_use_ui_view else PlayerView()
+        self.view_strategy = NonUiRelatedView() if not self._should_use_ui_view else PlayerView()     
         self.settings = EffectViewSettings() if settings is None else settings
-        self.mouse_on_it = False
 
         self.font = UiText()
 
@@ -154,10 +153,12 @@ class EffectView(HoverUiElement):
             self.sprite.image.set_colorkey("#ffffff")
             self._effect.owner_sprite.groups()[0].add(self.sprite)
 
+    def hoverOn(self) -> None:
+        print(f"hover on {id(self)}")
+
+    def hoverOff(self) -> None:
+        print("hover off")
+
     def updateByNotification(self, msg: EventObserverMsg) -> None:
-        self.mouse_on_it = self.box.collidepoint(msg.value.pos)
-
-        if self.mouse_on_it: # FIXME: check for None
-            pass                
-
-
+        if self.box is None: return
+        self.hover(msg)
