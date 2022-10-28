@@ -1,11 +1,11 @@
 import signal
 import sys
-from typing import Any, Optional, cast
+from typing import Any, Final, List, Optional, SupportsInt, cast
 
 import pygame
 
 from game_essentails.data.models.effect import EffectData
-from game_essentails.events import key_broadcast_subject
+from game_essentails.events import HOVER_TICK, key_broadcast_subject
 from game_essentails.game_state import GameState
 from game_essentails.level_handling.level_handler import LevelHandler
 from game_essentails.save_handling.constants import MUSIC_ON_STARTUP
@@ -75,7 +75,10 @@ class Game:
 
         handled_events = self.event_dict.keys()
         key_bindings = self.key_binding_dict.keys()
-        needed_mouse_event = [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION] # for observer (menu)
+        NEEDED_EVENTS: Final[List[SupportsInt]] = [
+            pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION, # mouse
+            HOVER_TICK # hovering
+        ] # for observer (menu)
 
         while self.game_state.isAlive():
             for event in pygame.event.get():
@@ -86,11 +89,14 @@ class Game:
                     self.key_binding_dict[event.key]()
 
                 # observer notification
-                if event.type == pygame.KEYDOWN or event.type in needed_mouse_event:
+                if event.type == pygame.KEYDOWN or event.type in map(int, NEEDED_EVENTS):
                     event_id: int = event.type
                     
                     if event.type == pygame.KEYDOWN:
                         event_id = event.key
+
+                    if event_id == int(HOVER_TICK):
+                        print("")
 
                     if event_id in key_broadcast_subject.getEventList():
                         key_broadcast_subject.notify(event_id, EventObserverMsg(event))

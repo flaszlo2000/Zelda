@@ -1,12 +1,15 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from typing import Any, Callable, Optional
 
-from game_essentails.events import key_broadcast_subject
+from game_essentails.events import HOVER_TICK, key_broadcast_subject
 from pygame.color import Color
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
 from pygame.rect import Rect
 from pygame.surface import Surface
+from pygame.time import set_timer
 from scripts.observer import EventObserverMsg, KeyObserver
+from setting_handler import get_common_setting
 
 
 class BasicUiElement(ABC):
@@ -37,17 +40,40 @@ class ClickableUiElement(BasicUiElement, KeyObserver[EventObserverMsg]):
     @abstractmethod
     def getStateColor(self) -> Color:...
 
+@dataclass
+class HoverBehaviourData:
+    mouse_on_it: bool = field(default = False)
+    event_sent: bool = field(default = False)
+    call_happened: bool = field(default = False)
+    showup_delay: int = field(default = get_common_setting("effect_showup_ms_delay"))
+
+    def setMouse(self, new_state: bool) -> None:
+        self.mouse_on_it = new_state
+
+    def dispatch(self) -> None:
+        if self.event_sent: return # warning/exception ?
+
+        set_timer(int(HOVER_TICK), self.showup_delay, 1)
+        self.event_sent = True
+
+    def reset(self) -> None:
+        self.event_sent = False
+        self.call_happened = False
+
+    def wasAbleToCall(self) -> None:
+        self.call_happened = True
+
 class HoverUiElement(BasicUiElement, KeyObserver[EventObserverMsg]):
     def __init__(
         self,
         visibility: bool = False,
         parent_is_visible: Optional[Callable[..., Any]] = None,
+        behaviour_data: Optional[HoverBehaviourData] = None
     ):
         super().__init__(visibility, parent_is_visible = parent_is_visible)
-        self.mouse_on_it = False
+        self.behaviour_data = HoverBehaviourData() if behaviour_data is None else behaviour_data
+
         self.box: Optional[Rect] = None
-        self.__hover_c = 0
-        self.hover_call_happened = False
 
         self.__registerKeys()
 
@@ -59,24 +85,29 @@ class HoverUiElement(BasicUiElement, KeyObserver[EventObserverMsg]):
 
     def __registerKeys(self) -> None:
         key_broadcast_subject.attach(self, MOUSEMOTION) # global registration to catch mouse motion
+        key_broadcast_subject.attach(self, int(HOVER_TICK))
+
+    def updateByNotification(self, msg: EventObserverMsg) -> None:
+        if self.box is None: return
+
+        if msg.value.type == int(HOVER_TICK):
+            if self.behaviour_data.mouse_on_it:
+                # if the required time elapsed and the cursor is still in place
+                self.behaviour_data.wasAbleToCall()
+                self.hoverOn()
+        else:
+            self.hover(msg)
 
     def hover(self, msg: EventObserverMsg) -> None:
-        #! BUG: hover works on when menu is drawn
         if self.box is None: raise AttributeError("[*] ERROR: box must be not None to check hover!")
 
-        lookup_value = self.mouse_on_it
-        self.mouse_on_it = self.box.collidepoint(msg.value.pos)
+        self.behaviour_data.setMouse(self.box.collidepoint(msg.value.pos))
 
-        if lookup_value == self.mouse_on_it: 
-            if self.mouse_on_it:
-                self.__hover_c += 1 # TODO: make this not move based
-
-                if self.__hover_c > 10 and not self.hover_call_happened: # TODO: make this configurable
-                    self.hover_call_happened = True
-                    self.hoverOn()
+        if self.behaviour_data.mouse_on_it:
+            if not self.behaviour_data.event_sent:
+                self.behaviour_data.dispatch()
         else:
-            self.__hover_c = 0
-
-            if not self.mouse_on_it and self.hover_call_happened:
-                self.hover_call_happened = False
+            if self.behaviour_data.call_happened:
                 self.hoverOff()
+
+            self.behaviour_data.reset()

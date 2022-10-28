@@ -154,11 +154,8 @@ class EffectView(HoverUiElement):
             self._effect.owner_sprite.groups()[0].add(self.sprite)
 
     def hoverOn(self) -> None:
+        print("Asd")
         print(f"hover on {id(self)}")
 
     def hoverOff(self) -> None:
         print("hover off")
-
-    def updateByNotification(self, msg: EventObserverMsg) -> None:
-        if self.box is None: return
-        self.hover(msg)

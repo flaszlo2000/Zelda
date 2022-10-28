@@ -22,8 +22,10 @@ MAIN_SOUND_TOGGLE = EventId()
 SAVE_GAME = EventId()
 LOAD_GAME = EventId()
 PAUSE_TOGGLE = EventId()
+
 HOVER_ON = EventId() # see HoverUiElement
 HOVER_OFF = EventId() # see HoverUiElemen
+HOVER_TICK = EventId()
 
 
 key_broadcast_subject = KeySubject()
